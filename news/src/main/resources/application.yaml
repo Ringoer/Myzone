@@ -1,0 +1,31 @@
+server:
+  port: 3335
+  connection-timeout: 30000
+#  address: 192.168.43.93
+
+spring:
+  application:
+    name: MYZONE-NEWS
+  profiles:
+    active: dev
+
+mybatis:
+  # domain对象的包
+  type-aliases-package: xmu.ringoer.myzone.news.domain
+  # mapper.xml所在的位置
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    # 自动将SQL中查出来的带下划线的字段，转换为驼峰标志，再去匹配类中的属性
+    mapUnderscoreToCamelCase: true
+    map-underscore-to-camel-case: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 10
+    lease-renewal-interval-in-seconds: 20
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:10000/eureka/

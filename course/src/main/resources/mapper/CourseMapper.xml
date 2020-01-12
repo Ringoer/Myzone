@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.ringoer.myzone.course.mapper.CourseMapper">
+
+    <select id="selectCourseByWeekday" parameterType="Course" resultType="Course">
+        select id,
+            user_id,
+            course_name,
+            is_odd_week,
+            weekday,
+            begin_time,
+            end_time,
+            place,
+            teacher,
+            credit,
+            `date`,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `course` where `user_id` = #{userId} and `is_deleted` = 0 and weekday = #{weekday};
+    </select>
+
+    <select id="selectCourseByUserId" parameterType="Integer" resultType="Course">
+        select id,
+            user_id,
+            course_name,
+            is_odd_week,
+            weekday,
+            begin_time,
+            end_time,
+            place,
+            teacher,
+            credit,
+            `date`,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `course` where `user_id` = #{userId} and `is_deleted` = 0;
+    </select>
+
+    <select id="selectCourseById" parameterType="Integer" resultType="Course">
+        select id,
+            user_id,
+            course_name,
+            is_odd_week,
+            weekday,
+            begin_time,
+            end_time,
+            place,
+            teacher,
+            credit,
+            `date`,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `course` where `id` = #{id} and `is_deleted` = 0;
+    </select>
+
+    <insert id="insertCourse" parameterType="Course" useGeneratedKeys="true" keyProperty="id">
+        insert into `course`(
+            user_id,
+            course_name,
+            is_odd_week,
+            weekday,
+            begin_time,
+            end_time,
+            place,
+            teacher,
+            credit,
+            `date`,
+            gmt_create,
+            gmt_modified,
+            is_deleted)
+        values (
+            #{userId},
+            #{courseName},
+            #{isOddWeek},
+            #{weekday},
+            #{beginTime},
+            #{endTime},
+            #{place},
+            #{teacher},
+            #{credit},
+            #{date},
+            now(),
+            now(),
+            0);
+    </insert>
+
+    <update id="deleteCourseById" parameterType="Integer" >
+        update `course`
+        set is_deleted = 1,
+            gmt_modified = now()
+        where id=#{id};
+    </update>
+</mapper>

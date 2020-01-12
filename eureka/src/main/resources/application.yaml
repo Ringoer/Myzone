@@ -1,0 +1,12 @@
+server:
+  port: 10000 #服务注册中心端口号
+eureka:
+  server:
+    enable-self-preservation: false #关掉尸体保护
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false #不向服务注册中心注册自己（自己就是注册中心，自己把自己注册到自己身上？）
+    fetchRegistry: false #不检索服务（注册中心不需要检索服务）
+    serviceUrl: #服务注册中心的配置内容，指定服务注册中心的位置
+      defaultZone: http://localhost:10000/eureka/

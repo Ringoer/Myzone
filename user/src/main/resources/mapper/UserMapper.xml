@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.ringoer.myzone.user.mapper.UserMapper">
+
+    <select id="selectUserByUsername" parameterType="String" resultType="User">
+        select id,
+            username,
+            password,
+            role_id,
+            nickname,
+            avatar,
+            signature,
+            mobile,
+            gender,
+            birthday,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `user` where `username` = #{username};
+    </select>
+
+    <select id="selectUserById" parameterType="Integer" resultType="User">
+        select id,
+            username,
+            password,
+            role_id,
+            nickname,
+            avatar,
+            signature,
+            mobile,
+            gender,
+            birthday,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `user` where `id` = #{id};
+    </select>
+
+    <select id="selectUserByMobile" parameterType="String" resultType="User">
+        select id,
+            username,
+            password,
+            role_id,
+            nickname,
+            avatar,
+            signature,
+            mobile,
+            gender,
+            birthday,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `user` where `mobile` = #{mobile};
+    </select>
+
+    <select id="selectUsers" resultType="User">
+        select id,
+            username,
+            password,
+            role_id,
+            nickname,
+            avatar,
+            signature,
+            mobile,
+            gender,
+            birthday,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `user` where `is_deleted` = 0;
+    </select>
+
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into `user`(
+            username,
+            password,
+            role_id,
+            nickname,
+            avatar,
+            signature,
+            mobile,
+            gender,
+            birthday,
+            gmt_create,
+            gmt_modified,
+            is_deleted)
+        values (
+            #{username},
+            #{password},
+            #{roleId},
+            #{nickname},
+            #{avatar},
+            #{signature},
+            #{mobile},
+            #{gender},
+            #{birthday},
+            now(),
+            now(),
+            0);
+    </insert>
+
+    <update id="updateUser" parameterType="User" >
+        update `user`
+        set nickname = #{nickname},
+            avatar = #{avatar},
+            signature = #{signature},
+            gender = #{gender},
+            birthday = #{birthday},
+            gmt_modified = now()
+        where id=#{id};
+    </update>
+
+    <update id="updateUserPassword" parameterType="User" >
+        update `user`
+        set password = #{password},
+            gmt_modified = now()
+        where id=#{id};
+    </update>
+
+    <update id="updateUserMobile" parameterType="User" >
+        update `user`
+        set mobile = #{mobile},
+        gmt_modified = now()
+        where id=#{id};
+    </update>
+
+</mapper>

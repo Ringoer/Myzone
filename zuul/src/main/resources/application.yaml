@@ -1,0 +1,80 @@
+server:
+  port: 9527
+  connection-timeout: 30000
+#  address: 192.168.43.93
+
+spring:
+  application:
+    name: MYZONE-ZUUL
+  profiles:
+    active: dev
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+
+mybatis:
+  #domain对象的包
+  type-aliases-package: xmu.ringoer.myzone.zuul.domain
+  #mapper。xml所在的位置
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    #自动将SQL中查出来的带下划线的字段，转换为驼峰标志，再去匹配类中的属性
+    mapUnderscoreToCamelCase: true
+    map-underscore-to-camel-case: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 10
+    lease-renewal-interval-in-seconds: 20
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:10000/eureka/
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 100000
+ribbon:
+#  eager-load:
+#    enabled: true
+#  eureka:
+#    enable: false #为Ribbon禁用Eureka
+  #http请求连接建立超时时间（ms）
+  ReadTimeout: 30000
+  #http请求处理超时时间（ms）
+  ConnectTimeout: 60000
+#  #默认重试次数
+#  MaxAutoRetries: 2
+#  #默认尝试的实例数
+#  MaxAutoRetriesNextServer: 2
+
+zuul:
+  SendErrorFilter:
+    error:
+      disable: true
+  host:
+    socket-timeout-millis: 30000
+    connect-timeout-millis: 30000
+  #  ribbon:
+  #    eager-load:
+  #      enabled: true
+  #prefix: /api  #前缀
+  #strip-prefix: true  #是否启用前缀
+  retryable: true
+  routes:
+    route-course:
+      serviceId: MYZONE-COURSE
+      path: /course/**
+    route-news:
+      serviceId: MYZONE-NEWS
+      path: /news/**
+    route-user:
+      serviceId: MYZONE-USER
+      path: /user/**
