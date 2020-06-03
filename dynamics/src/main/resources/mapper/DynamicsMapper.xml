@@ -31,11 +31,11 @@
             favorited,
             gmt_create,
             gmt_modified,
-            is_deleted as beDeleted)
+            is_deleted)
         values (
             #{userId},
             #{dynamics},
-            #{favorited},
+            0,
             now(),
             now(),
             0);
