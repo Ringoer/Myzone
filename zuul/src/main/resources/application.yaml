@@ -78,3 +78,6 @@ zuul:
     route-user:
       serviceId: MYZONE-USER
       path: /user/**
+    route-dynamics:
+      serviceId: MYZONE-DYNAMICS
+      path: /dynamics/**

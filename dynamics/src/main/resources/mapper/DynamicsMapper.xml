@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.ringoer.myzone.dynamics.mapper.DynamicsMapper">
+
+    <select id="selectDynamicsByUserId" parameterType="Integer" resultType="Dynamics">
+        select id,
+            user_id,
+            dynamics,
+            favorited,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `dynamics` where `user_id` = #{userId} and `is_deleted` = 0;
+    </select>
+
+    <select id="selectDynamicsById" parameterType="Integer" resultType="Dynamics">
+        select id,
+            user_id,
+            dynamics,
+            favorited,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `dynamics` where `id` = #{id} and `is_deleted` = 0;
+    </select>
+
+    <insert id="insertDynamics" parameterType="Dynamics" useGeneratedKeys="true" keyProperty="id">
+        insert into `dynamics`(
+            user_id,
+            dynamics,
+            favorited,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted)
+        values (
+            #{userId},
+            #{dynamics},
+            #{favorited},
+            now(),
+            now(),
+            0);
+    </insert>
+
+    <update id="deleteDynamicsById" parameterType="Integer" >
+        update `dynamics`
+        set is_deleted = 1,
+            gmt_modified = now()
+        where id=#{id};
+    </update>
+</mapper>
