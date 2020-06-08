@@ -44,4 +44,11 @@ public interface CourseMapper {
      * @return 课程列表
      */
     List<Course> selectCourseByWeekday(Course course);
+
+    /**
+     * 更新课程
+     * @param course 课程信息体
+     * @return 行数
+     */
+    Integer updateCourse(Course course);
 }

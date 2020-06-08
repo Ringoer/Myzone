@@ -2,6 +2,8 @@ package xmu.ringoer.myzone.course.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,6 +25,21 @@ public class Course {
     private LocalDateTime gmtModified;
     private LocalDateTime gmtCreate;
     private boolean beDeleted;
+
+    public List<String> values() {
+        List<String> values = new ArrayList<>();
+        values.add(courseName);
+        values.add(isOddWeek);
+        values.add(weekday);
+        values.add(beginTime.toString());
+        values.add(endTime.toString());
+        values.add(place);
+        values.add(teacher);
+        values.add(credit.toString());
+        values.add(date);
+
+        return values;
+    }
 
     public boolean check() {
         if(null == courseName || "".equals(courseName) ||

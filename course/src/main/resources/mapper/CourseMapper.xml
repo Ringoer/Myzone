@@ -91,6 +91,22 @@
         update `course`
         set is_deleted = 1,
             gmt_modified = now()
-        where id=#{id};
+        where id = #{id};
+    </update>
+
+    <update id="updateCourse" parameterType="Course">
+        update `course`
+        set user_id = #{userId},
+            course_name = #{courseName},
+            is_odd_week = #{isOddWeek},
+            weekday = #{weekday},
+            begin_time = #{beginTime},
+            end_time = #{endTime},
+            place = #{place},
+            teacher = #{teacher},
+            credit = #{credit},
+            `date` = #{date},
+            gmt_modified = now()
+        where id = #{id};
     </update>
 </mapper>

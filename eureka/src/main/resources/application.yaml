@@ -5,6 +5,10 @@ eureka:
     enable-self-preservation: false #关掉尸体保护
   instance:
     hostname: localhost
+#    #设置使用IP
+#    prefer-ip-address: true
+#    #设置外网IP号
+#    ip-address: 106.15.92.5
   client:
     registerWithEureka: false #不向服务注册中心注册自己（自己就是注册中心，自己把自己注册到自己身上？）
     fetchRegistry: false #不检索服务（注册中心不需要检索服务）

@@ -35,4 +35,8 @@ public class CourseDao {
     public List<Course> selectCourseByWeekday(Course course) {
         return courseMapper.selectCourseByWeekday(course);
     }
+
+    public Integer updateCourse(Course course) {
+        return courseMapper.updateCourse(course);
+    }
 }
