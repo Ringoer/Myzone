@@ -16,8 +16,8 @@ public class DynamicsController {
     private DynamicsService dynamicsService;
 
     @GetMapping("/")
-    public Object getDynamicsByUserId(@RequestHeader Integer userId) {
-        return dynamicsService.getDynamicsByUserId(userId);
+    public Object getDynamicsByUserId(@RequestHeader Integer userId, @RequestParam String p) {
+        return dynamicsService.getDynamicsByUserId(userId, p);
     }
 
     @GetMapping("/{id}")

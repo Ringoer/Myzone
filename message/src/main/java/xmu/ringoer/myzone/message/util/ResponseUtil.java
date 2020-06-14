@@ -1,4 +1,4 @@
-package xmu.ringoer.myzone.course.util;
+package xmu.ringoer.myzone.message.util;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -103,6 +103,10 @@ public class ResponseUtil {
 
     public static JSONObject wrongPage() {
         return fail(506, "页码越界");
+    }
+
+    public static JSONObject wrongCode() {
+        return fail(667, "验证码错误");
     }
 
     public static JSONObject notfound() {

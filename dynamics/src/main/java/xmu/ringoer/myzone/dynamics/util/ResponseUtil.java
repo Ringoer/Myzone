@@ -101,36 +101,8 @@ public class ResponseUtil {
         return fail(505, "更新数据失败");
     }
 
-    public static JSONObject unLogin() {
-        return fail(660, "用户未登录");
-    }
-
-    public static JSONObject noName() {
-        return fail(661, "用户名已被注册");
-    }
-
-    public static JSONObject wrongMobile() {
-        return fail(662, "手机号已被注册");
-    }
-
-    public static JSONObject withoutName() {
-        return fail(663, "用户名不存在");
-    }
-
-    public static JSONObject wrongPassword() {
-        return fail(664, "登录密码错误");
-    }
-
-    public static JSONObject failToUpdateUser() {
-        return fail(665, "修改用户信息失败");
-    }
-
-    public static JSONObject unauthz() {
-        return fail(666, "用户无操作权限");
-    }
-
-    public static JSONObject wrongCode() {
-        return fail(667, "验证码错误");
+    public static JSONObject wrongPage() {
+        return fail(506, "页码越界");
     }
 
     public static JSONObject notfound() {

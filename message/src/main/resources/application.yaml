@@ -1,17 +1,17 @@
 server:
-  port: 3334
+  port: 3337
   connection-timeout: 30000
 #  address: 192.168.43.93
 
 spring:
   application:
-    name: MYZONE-COURSE
+    name: MYZONE-MESSAGE
   profiles:
     active: dev
 
 mybatis:
   #domain对象的包
-  type-aliases-package: xmu.ringoer.myzone.course.domain
+  type-aliases-package: xmu.ringoer.myzone.message.domain
   #mapper。xml所在的位置
   mapper-locations: classpath:mapper/*.xml
   configuration:

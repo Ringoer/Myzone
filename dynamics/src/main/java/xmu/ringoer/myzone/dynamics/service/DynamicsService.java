@@ -15,17 +15,35 @@ import java.util.List;
 @Service
 public class DynamicsService {
 
-    private static final String[] WEEKDAYS = {"", "周一", "周二", "周三", "周四", "周五", "周六", "周日"};
-
     @Autowired
     private DynamicsDao dynamicsDao;
 
-    public Object getDynamicsByUserId(Integer userId) {
+    private Integer getBase(String p) {
+        int perPage = 10;
+
+        int page = Integer.parseInt(p) - 1;
+        return perPage * page;
+    }
+
+    public Object getDynamicsByUserId(Integer userId, String page) {
         if(null == userId) {
             return ResponseUtil.badArgument();
         }
 
-        List<Dynamics> dynamics = dynamicsDao.selectDynamicsByUserId(userId);
+        try {
+            int p = Integer.parseInt(page);
+            if(p < 1) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            return ResponseUtil.badArgument();
+        }
+
+        List<Dynamics> dynamics = dynamicsDao.selectDynamicsByUserId(userId, getBase(page));
+        if (null == dynamics || dynamics.size() == 0) {
+            return ResponseUtil.wrongPage();
+        }
+
         return ResponseUtil.ok(dynamics);
     }
 

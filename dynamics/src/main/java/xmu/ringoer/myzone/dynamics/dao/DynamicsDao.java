@@ -16,8 +16,8 @@ public class DynamicsDao {
     @Autowired
     private DynamicsMapper dynamicsMapper;
 
-    public List<Dynamics> selectDynamicsByUserId(Integer userId) {
-        return dynamicsMapper.selectDynamicsByUserId(userId);
+    public List<Dynamics> selectDynamicsByUserId(Integer userId, Integer base) {
+        return dynamicsMapper.selectDynamicsByUserId(userId, base);
     }
 
     public Integer insertDynamics(Dynamics course) {

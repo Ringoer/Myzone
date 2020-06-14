@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.ringoer.myzone.dynamics.mapper.DynamicsMapper">
 
-    <select id="selectDynamicsByUserId" parameterType="Integer" resultType="Dynamics">
+    <select id="selectDynamicsByUserId" resultType="Dynamics">
         select id,
             user_id,
             dynamics,
@@ -10,7 +10,9 @@
             gmt_create,
             gmt_modified,
             is_deleted as beDeleted
-        from `dynamics` where `user_id` = #{userId} and `is_deleted` = 0;
+        from `dynamics` where `user_id` = #{userId} and `is_deleted` = 0
+        group by `id` desc
+        limit #{base}, 10;
     </select>
 
     <select id="selectDynamicsById" parameterType="Integer" resultType="Dynamics">

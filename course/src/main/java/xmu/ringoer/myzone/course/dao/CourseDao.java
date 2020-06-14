@@ -16,8 +16,8 @@ public class CourseDao {
     @Autowired
     private CourseMapper courseMapper;
 
-    public List<Course> selectCourseByUserId(Integer userId) {
-        return courseMapper.selectCourseByUserId(userId);
+    public List<Course> selectCourseByUserId(Integer userId, String queryString, Integer base) {
+        return courseMapper.selectCourseByUserId(userId, "%" + queryString + "%", base);
     }
 
     public Integer insertCourse(Course course) {

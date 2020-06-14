@@ -18,10 +18,15 @@ public class CourseService {
 
     private static final String[] WEEKDAYS = {"", "周一", "周二", "周三", "周四", "周五", "周六", "周日"};
 
-    private List<Course> sqlCourses = null;
-
     @Autowired
     private CourseDao courseDao;
+
+    private Integer getBase(String p) {
+        int perPage = 10;
+
+        int page = Integer.parseInt(p) - 1;
+        return perPage * page;
+    }
 
     public Object getCourses(Integer userId, String queryString, String page) {
         if(null == userId) {
@@ -29,7 +34,7 @@ public class CourseService {
         }
 
         if(null == queryString) {
-            return ResponseUtil.badArgument();
+            queryString = "";
         }
 
         try {
@@ -41,39 +46,12 @@ public class CourseService {
             return ResponseUtil.badArgument();
         }
 
-        List<Course> courses = sqlCourses;
-        if(null == courses) {
-            courses = courseDao.selectCourseByUserId(userId);
+        List<Course> courses = courseDao.selectCourseByUserId(userId, queryString, getBase(page));
+        if (null == courses || courses.size() == 0) {
+            return ResponseUtil.wrongPage();
         }
 
-        if("".equals(queryString)) {
-            return ResponseUtil.ok(splitByPage(courses, page));
-        }
-
-        String[] tags = queryString.split(" ");
-
-        List<Course> ans = new ArrayList<>();
-
-        for(Course course : courses) {
-            List<String> values = course.values();
-            boolean flag = true;
-            for(String tag : tags) {
-                if("".equals(tag)) {
-                    continue;
-                }
-
-                if(!values.contains(tag)) {
-                    flag = false;
-                    break;
-                }
-            }
-
-            if(flag) {
-                ans.add(course);
-            }
-        }
-
-        return ResponseUtil.ok(ans);
+        return ResponseUtil.ok(courses);
     }
 
     public Object postCourse(Integer userId, Course course) {
@@ -91,10 +69,6 @@ public class CourseService {
 
         if(lines.equals(0)) {
             return ResponseUtil.serious();
-        }
-
-        if(null != sqlCourses) {
-            sqlCourses.add(course);
         }
 
         return ResponseUtil.ok(course.getId());
@@ -120,10 +94,6 @@ public class CourseService {
             return ResponseUtil.badArgumentValue();
         }
 
-        if(null != sqlCourses) {
-            sqlCourses.remove(course);
-        }
-
         return ResponseUtil.ok();
     }
 
@@ -145,8 +115,6 @@ public class CourseService {
             return ResponseUtil.serious();
         }
 
-        sqlCourses = null;
-
         return ResponseUtil.ok();
     }
 
@@ -159,18 +127,5 @@ public class CourseService {
         List<Course> courses = courseDao.selectCourseByWeekday(course);
 
         return ResponseUtil.ok(courses);
-    }
-
-    private List<Course> splitByPage(List<Course> courses, String p) {
-        int page = Integer.parseInt(p);
-
-        int ceil = page * 10;
-        int floor = ceil - 10;
-
-        if(courses.size() < ceil) {
-            ceil = courses.size();
-            floor = ceil - ceil % 10;
-        }
-        return courses.subList(floor, ceil);
     }
 }

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.ringoer.myzone.message.mapper.MessageMapper">
+
+    <select id="selectMessagesByUserId" resultType="Message">
+        select id,
+            send_time,
+            topic,
+            content,
+            type,
+            is_read as beRead,
+            from_id,
+            to_id,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `message`
+        where `to_id` = #{userId} and `is_deleted` = 0
+        order by `id` desc
+        limit #{base}, 10;
+    </select>
+
+    <select id="selectLatestMessagesByUserId" parameterType="Integer" resultType="Message">
+        select id,
+            send_time,
+            topic,
+            content,
+            type,
+            is_read as beRead,
+            from_id,
+            to_id,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `message`
+        where `to_id` = #{userId} and `is_deleted` = 0
+        order by `id` desc
+        limit 5;
+    </select>
+
+    <select id="selectMessageById" parameterType="Integer" resultType="Message">
+        select id,
+            send_time,
+            topic,
+            content,
+            type,
+            is_read as beRead,
+            from_id,
+            to_id,
+            gmt_create,
+            gmt_modified,
+            is_deleted as beDeleted
+        from `message` where `id` = #{id} and `is_deleted` = 0;
+    </select>
+
+    <insert id="insertMessage" parameterType="Message" useGeneratedKeys="true" keyProperty="id">
+        insert into `message`(
+            send_time,
+            topic,
+            content,
+            type,
+            is_read,
+            from_id,
+            to_id,
+            gmt_create,
+            gmt_modified,
+            is_deleted)
+        values (
+            now(),
+            #{topic},
+            #{content},
+            #{type},
+            0,
+            #{fromId},
+            #{toId},
+            now(),
+            now(),
+            0);
+    </insert>
+
+    <update id="deleteMessageById" parameterType="Integer" >
+        update `message`
+        set is_deleted = 1,
+            gmt_modified = now()
+        where id = #{id};
+    </update>
+
+    <update id="readMessageById" parameterType="Integer" >
+        update `message`
+        set is_read = 1,
+            gmt_modified = now()
+        where id = #{id};
+    </update>
+</mapper>

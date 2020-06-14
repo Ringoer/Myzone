@@ -16,7 +16,7 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping("/")
-    public Object getCourses(@RequestHeader Integer userId, @RequestParam String q, @RequestParam String p) {
+    public Object getCourses(@RequestHeader Integer userId, @RequestParam(required = false) String q, @RequestParam String p) {
         return courseService.getCourses(userId, q, p);
     }
 

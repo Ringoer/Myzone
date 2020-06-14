@@ -20,7 +20,7 @@
         from `course` where `user_id` = #{userId} and `is_deleted` = 0 and weekday = #{weekday};
     </select>
 
-    <select id="selectCourseByUserId" parameterType="Integer" resultType="Course">
+    <select id="selectCourseByUserId" resultType="Course">
         select id,
             user_id,
             course_name,
@@ -35,7 +35,18 @@
             gmt_create,
             gmt_modified,
             is_deleted as beDeleted
-        from `course` where `user_id` = #{userId} and `is_deleted` = 0;
+        from `course`
+        where `user_id` = #{userId} and `is_deleted` = 0 and
+        (
+            course_name like #{queryString} or
+            is_odd_week like #{queryString} or
+            place like #{queryString} or
+            teacher like #{queryString} or
+            date like #{queryString} or
+            credit like #{queryString} or
+            date like #{queryString}
+        )
+        limit #{base}, 10;
     </select>
 
     <select id="selectCourseById" parameterType="Integer" resultType="Course">
