@@ -6,11 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xmu.ringoer.myzone.user.dao.UserDao;
+import xmu.ringoer.myzone.user.domain.Message;
 import xmu.ringoer.myzone.user.domain.User;
+import xmu.ringoer.myzone.user.feign.MessageService;
 import xmu.ringoer.myzone.user.util.CommonUtil;
 import xmu.ringoer.myzone.user.util.ResponseUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,6 +26,9 @@ public class UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private MessageService messageService;
 
     public Object login(User loginUser) {
         if(null == loginUser || null == loginUser.getUsername() || null == loginUser.getPassword()) {
@@ -42,6 +48,9 @@ public class UserService {
         JSONObject resp = new JSONObject();
         resp.put("userId", user.getId());
         resp.put("roleId", user.getRoleId());
+
+        messageService.postMessage(0, new Message("欢迎登录！", "本次登录时间为 " + LocalDateTime.now().toString(), "通知", true, 0, user.getId()));
+
         return ResponseUtil.ok(resp);
     }
 

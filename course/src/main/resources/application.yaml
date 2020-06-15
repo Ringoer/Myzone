@@ -28,4 +28,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://ali.ringoer.com:10000/eureka/
+      defaultZone: http://localhost:10000/eureka/

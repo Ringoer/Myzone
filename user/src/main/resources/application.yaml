@@ -29,3 +29,20 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:10000/eureka/
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 100000
+ribbon:
+  #  eager-load:
+  #    enabled: true
+  #  eureka:
+  #    enable: false #为Ribbon禁用Eureka
+  #http请求连接建立超时时间（ms）
+  ReadTimeout: 30000
+  #http请求处理超时时间（ms）
+  ConnectTimeout: 60000

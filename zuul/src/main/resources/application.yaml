@@ -81,3 +81,6 @@ zuul:
     route-dynamics:
       serviceId: MYZONE-DYNAMICS
       path: /dynamics/**
+    route-message:
+      serviceId: MYZONE-MESSAGE
+      path: /message/**

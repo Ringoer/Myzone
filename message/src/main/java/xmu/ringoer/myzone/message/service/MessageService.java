@@ -24,9 +24,13 @@ public class MessageService {
         return perPage * page;
     }
 
-    public Object getMessageByUserId(Integer userId, String page) {
+    public Object getMessageByUserId(Integer userId, String queryString, String page) {
         if(null == userId) {
             return ResponseUtil.badArgument();
+        }
+
+        if(null == queryString) {
+            queryString = "";
         }
 
         try {
@@ -38,7 +42,7 @@ public class MessageService {
             return ResponseUtil.badArgument();
         }
 
-        List<Message> messages = messageDao.selectMessagesByUserId(userId, getBase(page));
+        List<Message> messages = messageDao.selectMessagesByUserId(userId, queryString, getBase(page));
         if (null == messages || messages.size() == 0) {
             return ResponseUtil.wrongPage();
         }
@@ -78,7 +82,15 @@ public class MessageService {
             return ResponseUtil.badArgument();
         }
 
-        message.setBeRead(false);
+        if(!userId.equals(message.getFromId())) {
+            return ResponseUtil.badArgument();
+        }
+
+        System.out.println(message);
+
+        if(!message.isBeRead()) {
+            message.setBeRead(false);
+        }
 
         Integer lines = messageDao.insertMessage(message);
 
@@ -112,16 +124,41 @@ public class MessageService {
         return ResponseUtil.ok();
     }
 
-    public Object readMessage(Integer userId, List<Integer> selectedMessages) {
-        if(null == userId || null == selectedMessages) {
+    public Object readMessage(Integer userId, List<Integer> ids) {
+        if(null == userId || null == ids) {
             return ResponseUtil.badArgument();
         }
 
-        for (Integer id : selectedMessages) {
+        for (Integer id : ids) {
             Integer lines = messageDao.readMessageById(id);
 
             if(lines.equals(0)) {
                 return ResponseUtil.serious();
+            }
+        }
+
+        return ResponseUtil.ok();
+    }
+
+    public Object deleteMessageByIds(Integer userId, List<Integer> ids) {
+        if(null == userId || null == ids) {
+            return ResponseUtil.badArgument();
+        }
+
+        for(int id : ids) {
+            Message message = messageDao.selectMessageById(id);
+
+            if(null == message) {
+                return ResponseUtil.badArgumentValue();
+            }
+            if(!userId.equals(message.getToId())) {
+                return ResponseUtil.badArgumentValue();
+            }
+
+            Integer lines = messageDao.deleteMessageById(id);
+
+            if(lines.equals(0)) {
+                return ResponseUtil.badArgumentValue();
             }
         }
 

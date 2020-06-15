@@ -1,4 +1,4 @@
-package xmu.ringoer.myzone.message.domain;
+package xmu.ringoer.myzone.user.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

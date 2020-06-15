@@ -13,12 +13,13 @@ import java.util.List;
 public interface MessageMapper {
 
     /**
-     * 根据userId查找消息
+     * 根据userId和类型查找消息
      * @param userId 用户id
+     * @param queryString 类型
      * @param base 下界
      * @return 消息列表
      */
-    List<Message> selectMessagesByUserId(@Param("userId") Integer userId, @Param("base") Integer base);
+    List<Message> selectMessagesByUserId(@Param("userId") Integer userId, @Param("queryString") String queryString, @Param("base") Integer base);
 
     /**
      * 插入新消息

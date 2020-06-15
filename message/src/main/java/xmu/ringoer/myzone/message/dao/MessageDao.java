@@ -16,8 +16,8 @@ public class MessageDao {
     @Autowired
     private MessageMapper messageMapper;
 
-    public List<Message> selectMessagesByUserId(Integer userId, Integer base) {
-        return messageMapper.selectMessagesByUserId(userId, base);
+    public List<Message> selectMessagesByUserId(Integer userId, String queryString, Integer base) {
+        return messageMapper.selectMessagesByUserId(userId, "%" + queryString + "%", base);
     }
 
     public Integer insertMessage(Message course) {

@@ -15,7 +15,7 @@
             gmt_modified,
             is_deleted as beDeleted
         from `message`
-        where `to_id` = #{userId} and `is_deleted` = 0
+        where `to_id` = #{userId} and `is_deleted` = 0 and type like #{queryString}
         order by `id` desc
         limit #{base}, 10;
     </select>
@@ -33,7 +33,7 @@
             gmt_modified,
             is_deleted as beDeleted
         from `message`
-        where `to_id` = #{userId} and `is_deleted` = 0
+        where `to_id` = #{userId} and `is_read` = 0 and `is_deleted` = 0
         order by `id` desc
         limit 5;
     </select>
@@ -70,7 +70,7 @@
             #{topic},
             #{content},
             #{type},
-            0,
+            #{beRead},
             #{fromId},
             #{toId},
             now(),

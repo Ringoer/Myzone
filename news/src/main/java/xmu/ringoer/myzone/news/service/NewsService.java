@@ -40,10 +40,12 @@ public class NewsService {
             List<ElsInfo> elsInfos = new ArrayList<>();
             String[] news = stringBuilder.toString().split("<ul class=\"index_news_main\"")[1].split("<li style=\"\"");
             for (int i = 1; i < news.length; i++) {
-
                 String date = news[i].split("<span class=\"day flr\">")[1].split("</span>")[0].trim();
                 String type = news[i].split("<span class=\"flt\">")[1].split("</span>")[0].trim();
-                String target = "https://els.ztgame.com" + news[i].split("href=\"")[1].split("\"")[0].trim();
+                String target = news[i].split("href=\"")[1].split("\"")[0].trim().replace("&amp;", "&");
+                if(!target.contains("https")) {
+                    target = "https://els.ztgame.com" + target;
+                }
                 String title = news[i].split("style=\"\">")[1].split("</a>")[0].trim();
                 elsInfos.add(new ElsInfo(date, type, target, title));
             }
