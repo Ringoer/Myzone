@@ -29,18 +29,18 @@ public class MessageController {
     }
 
     @GetMapping("/{id}")
-    public Object getMessageById(@PathVariable Integer id) {
-        return messageService.getMessageById(id);
+    public Object getMessageById(@RequestHeader Integer userId, @PathVariable Integer id) {
+        return messageService.getMessageById(userId, id);
     }
 
     @PostMapping("/")
-    public Object postMessage(@RequestHeader Integer userId, @RequestBody Message message) {
-        return messageService.postMessage(userId, message);
+    public Object postMessage(@RequestHeader Integer userId, @RequestBody JSONObject data) {
+        return messageService.postMessage(userId, new Message(data.getJSONObject("message")), (List<Integer>)data.get("ids"));
     }
 
     @PutMapping("/")
     public Object putMessage(@RequestHeader Integer userId, @RequestBody JSONObject data) {
-        return messageService.readMessage(userId, (List<Integer>)data.get("data"));
+        return messageService.readMessage(userId, (List<Integer>)data.get("ids"), data.getBooleanValue("isRead"));
     }
 
     @DeleteMapping("/")

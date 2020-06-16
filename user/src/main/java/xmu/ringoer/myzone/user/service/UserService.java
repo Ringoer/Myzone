@@ -14,6 +14,7 @@ import xmu.ringoer.myzone.user.util.ResponseUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,7 +50,14 @@ public class UserService {
         resp.put("userId", user.getId());
         resp.put("roleId", user.getRoleId());
 
-        messageService.postMessage(0, new Message("欢迎登录！", "本次登录时间为 " + LocalDateTime.now().toString(), "通知", true, 0, user.getId()));
+        JSONObject message = new JSONObject();
+        message.put("message", new Message("欢迎登录！", "本次登录时间为 " + LocalDateTime.now().toString(), "系统", true, 0, user.getId()));
+        List<Integer> queryArray = new ArrayList<>();
+        queryArray.add(user.getId());
+        message.put("ids", queryArray);
+        System.out.println(message.toJSONString());
+
+        messageService.postMessage(0, message);
 
         return ResponseUtil.ok(resp);
     }

@@ -1,5 +1,7 @@
 package xmu.ringoer.myzone.message.domain;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -15,7 +17,9 @@ public class Message {
     private String type;
     private boolean beRead;
     private Integer fromId;
+    private String fromNickname;
     private Integer toId;
+    private String toNickname;
     private LocalDateTime gmtModified;
     private LocalDateTime gmtCreate;
     private boolean beDeleted;
@@ -30,6 +34,17 @@ public class Message {
         this.beRead = beRead;
         this.fromId = fromId;
         this.toId = toId;
+    }
+
+    public Message(JSONObject data) {
+        this.topic = data.getString("topic");
+        this.content = data.getString("content");
+        this.type = data.getString("type");
+        this.fromId = data.getInteger("fromId");
+        Boolean beRead = data.getBoolean("beRead");
+        if(null != beRead) {
+            this.beRead = beRead;
+        }
     }
 
     @Override
@@ -49,14 +64,16 @@ public class Message {
                 Objects.equals(content, message.content) &&
                 Objects.equals(type, message.type) &&
                 Objects.equals(fromId, message.fromId) &&
+                Objects.equals(fromNickname, message.fromNickname) &&
                 Objects.equals(toId, message.toId) &&
+                Objects.equals(toNickname, message.toNickname) &&
                 Objects.equals(gmtModified, message.gmtModified) &&
                 Objects.equals(gmtCreate, message.gmtCreate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, sendTime, topic, content, type, beRead, fromId, toId, gmtModified, gmtCreate, beDeleted);
+        return Objects.hash(id, sendTime, topic, content, type, beRead, fromId, fromNickname, toId, toNickname, gmtModified, gmtCreate, beDeleted);
     }
 
     @Override
@@ -69,7 +86,9 @@ public class Message {
                 ", type='" + type + '\'' +
                 ", beRead=" + beRead +
                 ", fromId=" + fromId +
+                ", fromNickname='" + fromNickname + '\'' +
                 ", toId=" + toId +
+                ", toNickname='" + toNickname + '\'' +
                 ", gmtModified=" + gmtModified +
                 ", gmtCreate=" + gmtCreate +
                 ", beDeleted=" + beDeleted +
@@ -132,12 +151,28 @@ public class Message {
         this.fromId = fromId;
     }
 
+    public String getFromNickname() {
+        return fromNickname;
+    }
+
+    public void setFromNickname(String fromNickname) {
+        this.fromNickname = fromNickname;
+    }
+
     public Integer getToId() {
         return toId;
     }
 
     public void setToId(Integer toId) {
         this.toId = toId;
+    }
+
+    public String getToNickname() {
+        return toNickname;
+    }
+
+    public void setToNickname(String toNickname) {
+        this.toNickname = toNickname;
     }
 
     public LocalDateTime getGmtModified() {

@@ -52,7 +52,8 @@ public interface MessageMapper {
     /**
      * 设置消息已读
      * @param id 消息id
+     * @param isRead 是否已读
      * @return 行数
      */
-    Integer readMessageById(Integer id);
+    Integer updateMessageById(@Param("id") Integer id, @Param("isRead") boolean isRead);
 }

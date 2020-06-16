@@ -36,7 +36,7 @@ public class MessageDao {
         return messageMapper.selectLatestMessagesByUserId(userId);
     }
 
-    public Integer readMessageById(Integer id) {
-        return messageMapper.readMessageById(id);
+    public Integer updateMessageById(Integer id, boolean isRead) {
+        return messageMapper.updateMessageById(id, isRead);
     }
 }

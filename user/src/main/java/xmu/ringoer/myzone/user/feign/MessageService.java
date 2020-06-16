@@ -1,5 +1,6 @@
 package xmu.ringoer.myzone.user.feign;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,10 +15,10 @@ public interface MessageService {
 
     /**
      * 调用 MessageService 服务发送一条消息
-     * @param userId 用户id
-     * @param message 消息
+     * @param userId 发件人id
+     * @param data 包含消息和目标id集合
      * @return 响应
      */
     @PostMapping("/")
-    Object postMessage(@RequestHeader Integer userId, @RequestBody Message message);
+    Object postMessage(@RequestHeader Integer userId, @RequestBody JSONObject data);
 }

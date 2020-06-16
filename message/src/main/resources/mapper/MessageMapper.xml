@@ -10,7 +10,9 @@
             type,
             is_read as beRead,
             from_id,
+            from_nickname,
             to_id,
+            to_nickname,
             gmt_create,
             gmt_modified,
             is_deleted as beDeleted
@@ -28,7 +30,9 @@
             type,
             is_read as beRead,
             from_id,
+            from_nickname,
             to_id,
+            to_nickname,
             gmt_create,
             gmt_modified,
             is_deleted as beDeleted
@@ -46,7 +50,9 @@
             type,
             is_read as beRead,
             from_id,
+            from_nickname,
             to_id,
+            to_nickname,
             gmt_create,
             gmt_modified,
             is_deleted as beDeleted
@@ -61,7 +67,9 @@
             type,
             is_read,
             from_id,
+            from_nickname,
             to_id,
+            to_nickname,
             gmt_create,
             gmt_modified,
             is_deleted)
@@ -72,7 +80,9 @@
             #{type},
             #{beRead},
             #{fromId},
+            #{fromNickname},
             #{toId},
+            #{toNickname},
             now(),
             now(),
             0);
@@ -85,9 +95,9 @@
         where id = #{id};
     </update>
 
-    <update id="readMessageById" parameterType="Integer" >
+    <update id="updateMessageById" >
         update `message`
-        set is_read = 1,
+        set is_read = #{isRead},
             gmt_modified = now()
         where id = #{id};
     </update>

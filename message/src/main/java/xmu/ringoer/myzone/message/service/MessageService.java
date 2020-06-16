@@ -1,9 +1,12 @@
 package xmu.ringoer.myzone.message.service;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xmu.ringoer.myzone.message.dao.MessageDao;
 import xmu.ringoer.myzone.message.domain.Message;
+import xmu.ringoer.myzone.message.feign.UserService;
+import xmu.ringoer.myzone.message.util.JacksonUtil;
 import xmu.ringoer.myzone.message.util.ResponseUtil;
 
 import java.util.List;
@@ -16,6 +19,9 @@ public class MessageService {
 
     @Autowired
     private MessageDao messageDao;
+
+    @Autowired
+    private UserService userService;
 
     private Integer getBase(String p) {
         int perPage = 10;
@@ -59,17 +65,17 @@ public class MessageService {
         return ResponseUtil.ok(messages);
     }
 
-    public Object getMessageById(Integer id) {
-        if(null == id) {
+    public Object getMessageById(Integer userId, Integer id) {
+        if(null == userId || null == id) {
             return ResponseUtil.badArgument();
         }
 
         Message message = messageDao.selectMessageById(id);
-        if(null == message) {
+        if(null == message || !userId.equals(message.getToId())) {
             return ResponseUtil.badArgumentValue();
         }
 
-        Integer lines = messageDao.readMessageById(id);
+        Integer lines = messageDao.updateMessageById(id, true);
         if(lines.equals(0)) {
             return ResponseUtil.serious();
         }
@@ -77,8 +83,8 @@ public class MessageService {
         return ResponseUtil.ok(message);
     }
 
-    public Object postMessage(Integer userId, Message message) {
-        if(null == userId || null == message) {
+    public Object postMessage(Integer userId, Message message, List<Integer> toIds) {
+        if(null == userId || null == message || null == toIds || toIds.size() == 0) {
             return ResponseUtil.badArgument();
         }
 
@@ -86,16 +92,37 @@ public class MessageService {
             return ResponseUtil.badArgument();
         }
 
-        System.out.println(message);
-
         if(!message.isBeRead()) {
             message.setBeRead(false);
         }
 
-        Integer lines = messageDao.insertMessage(message);
+        String value = "0", key = "errno";
 
-        if(lines.equals(0)) {
-            return ResponseUtil.serious();
+        if(0 == message.getFromId()) {
+            message.setFromNickname("系统");
+        } else {
+            JSONObject fromUser = JSONObject.parseObject(JacksonUtil.toJson(userService.getInfo(message.getFromId())));
+            if(!value.equals(fromUser.getString(key))) {
+                return ResponseUtil.badArgument();
+            }
+            message.setFromNickname(fromUser.getJSONObject("data").getString("nickname"));
+        }
+
+        for(Integer toId : toIds) {
+            message.setToId(toId);
+
+            JSONObject toUser = JSONObject.parseObject(JacksonUtil.toJson(userService.getInfo(message.getToId())));
+
+            if(!value.equals(toUser.getString(key))) {
+                return ResponseUtil.badArgument();
+            }
+            message.setToNickname(toUser.getJSONObject("data").getString("nickname"));
+
+            Integer lines = messageDao.insertMessage(message);
+
+            if(lines.equals(0)) {
+                return ResponseUtil.serious();
+            }
         }
 
         return ResponseUtil.ok(message.getId());
@@ -124,13 +151,13 @@ public class MessageService {
         return ResponseUtil.ok();
     }
 
-    public Object readMessage(Integer userId, List<Integer> ids) {
+    public Object readMessage(Integer userId, List<Integer> ids, boolean isRead) {
         if(null == userId || null == ids) {
             return ResponseUtil.badArgument();
         }
 
         for (Integer id : ids) {
-            Integer lines = messageDao.readMessageById(id);
+            Integer lines = messageDao.updateMessageById(id, isRead);
 
             if(lines.equals(0)) {
                 return ResponseUtil.serious();
