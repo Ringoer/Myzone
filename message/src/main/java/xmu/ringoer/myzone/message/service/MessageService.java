@@ -30,13 +30,9 @@ public class MessageService {
         return perPage * page;
     }
 
-    public Object getMessageByUserId(Integer userId, String queryString, String page) {
+    public Object getMessageByUserId(Integer userId, String page) {
         if(null == userId) {
             return ResponseUtil.badArgument();
-        }
-
-        if(null == queryString) {
-            queryString = "";
         }
 
         try {
@@ -48,7 +44,7 @@ public class MessageService {
             return ResponseUtil.badArgument();
         }
 
-        List<Message> messages = messageDao.selectMessagesByUserId(userId, queryString, getBase(page));
+        List<Message> messages = messageDao.selectMessagesByUserId(userId, getBase(page));
         if (null == messages || messages.size() == 0) {
             return ResponseUtil.wrongPage();
         }
@@ -98,15 +94,12 @@ public class MessageService {
 
         String value = "0", key = "errno";
 
-        if(0 == message.getFromId()) {
-            message.setFromNickname("系统");
-        } else {
-            JSONObject fromUser = JSONObject.parseObject(JacksonUtil.toJson(userService.getInfo(message.getFromId())));
-            if(!value.equals(fromUser.getString(key))) {
-                return ResponseUtil.badArgument();
-            }
-            message.setFromNickname(fromUser.getJSONObject("data").getString("nickname"));
+        JSONObject fromUser = JSONObject.parseObject(JacksonUtil.toJson(userService.getInfo(message.getFromId())));
+        if(!value.equals(fromUser.getString(key))) {
+            return ResponseUtil.badArgument();
         }
+        message.setFromUsername(fromUser.getJSONObject("data").getString("username"));
+        message.setFromNickname(fromUser.getJSONObject("data").getString("nickname"));
 
         for(Integer toId : toIds) {
             message.setToId(toId);
@@ -116,6 +109,7 @@ public class MessageService {
             if(!value.equals(toUser.getString(key))) {
                 return ResponseUtil.badArgument();
             }
+            message.setToUsername(toUser.getJSONObject("data").getString("username"));
             message.setToNickname(toUser.getJSONObject("data").getString("nickname"));
 
             Integer lines = messageDao.insertMessage(message);
@@ -190,5 +184,90 @@ public class MessageService {
         }
 
         return ResponseUtil.ok();
+    }
+
+    public Object getMessageByType(Integer userId, String queryString, String page) {
+        if(null == userId) {
+            return ResponseUtil.badArgument();
+        }
+
+        if(null == queryString) {
+            queryString = "";
+        }
+
+        try {
+            int p = Integer.parseInt(page);
+            if(p < 1) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            return ResponseUtil.badArgument();
+        }
+
+        List<Message> messages = messageDao.selectMessagesByType(userId, queryString, getBase(page));
+        if (null == messages || messages.size() == 0) {
+            return ResponseUtil.wrongPage();
+        }
+
+        return ResponseUtil.ok(messages);
+    }
+
+    public Object getMessageByFromId(Integer userId, String queryString, String page) {
+        if(null == userId) {
+            return ResponseUtil.badArgument();
+        }
+
+        try {
+            int q = Integer.parseInt(queryString);
+            if(q < 0) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            return ResponseUtil.badArgument();
+        }
+
+        try {
+            int p = Integer.parseInt(page);
+            if(p < 1) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            return ResponseUtil.badArgument();
+        }
+
+        List<Message> messages = messageDao.selectMessagesByFromId(userId, Integer.parseInt(queryString), getBase(page));
+        if (null == messages || messages.size() == 0) {
+            return ResponseUtil.wrongPage();
+        }
+
+        return ResponseUtil.ok(messages);
+    }
+
+    public Object getMessageByBeRead(Integer userId, String queryString, String page) {
+        if(null == userId) {
+            return ResponseUtil.badArgument();
+        }
+
+        try {
+            Boolean b = Boolean.parseBoolean(queryString);
+        } catch (Exception e) {
+            return ResponseUtil.badArgument();
+        }
+
+        try {
+            int p = Integer.parseInt(page);
+            if(p < 1) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            return ResponseUtil.badArgument();
+        }
+
+        List<Message> messages = messageDao.selectMessagesByBeRead(userId, Boolean.parseBoolean(queryString), getBase(page));
+        if (null == messages || messages.size() == 0) {
+            return ResponseUtil.wrongPage();
+        }
+
+        return ResponseUtil.ok(messages);
     }
 }

@@ -19,8 +19,23 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping("/")
-    public Object getMessageByUserId(@RequestHeader Integer userId, @RequestParam String q, @RequestParam String p) {
-        return messageService.getMessageByUserId(userId, q, p);
+    public Object getMessageByUserId(@RequestHeader Integer userId, @RequestParam(required = false) String q, @RequestParam String p) {
+        return messageService.getMessageByUserId(userId, p);
+    }
+
+    @GetMapping("/type")
+    public Object getMessageByType(@RequestHeader Integer userId, @RequestParam String q, @RequestParam String p) {
+        return messageService.getMessageByType(userId, q, p);
+    }
+
+    @GetMapping("/fromid")
+    public Object getMessageByFromId(@RequestHeader Integer userId, @RequestParam String q, @RequestParam String p) {
+        return messageService.getMessageByFromId(userId, q, p);
+    }
+
+    @GetMapping("/beread")
+    public Object getMessageByBeRead(@RequestHeader Integer userId, @RequestParam String q, @RequestParam String p) {
+        return messageService.getMessageByBeRead(userId, q, p);
     }
 
     @GetMapping("/latest")

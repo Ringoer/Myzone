@@ -9,7 +9,7 @@ import xmu.ringoer.myzone.user.service.UserService;
  * @author Ringoer
  */
 @RestController
-@RequestMapping(value = "", produces = {"application/json;charset=UTF-8"})
+@RequestMapping(value = "/api", produces = {"application/json;charset=UTF-8"})
 public class UserController {
 
     @Autowired

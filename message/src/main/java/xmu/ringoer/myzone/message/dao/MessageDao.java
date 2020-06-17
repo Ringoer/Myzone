@@ -16,8 +16,8 @@ public class MessageDao {
     @Autowired
     private MessageMapper messageMapper;
 
-    public List<Message> selectMessagesByUserId(Integer userId, String queryString, Integer base) {
-        return messageMapper.selectMessagesByUserId(userId, "%" + queryString + "%", base);
+    public List<Message> selectMessagesByUserId(Integer userId, Integer base) {
+        return messageMapper.selectMessagesByUserId(userId, base);
     }
 
     public Integer insertMessage(Message course) {
@@ -38,5 +38,17 @@ public class MessageDao {
 
     public Integer updateMessageById(Integer id, boolean isRead) {
         return messageMapper.updateMessageById(id, isRead);
+    }
+
+    public List<Message> selectMessagesByType(Integer userId, String type, Integer base) {
+        return messageMapper.selectMessagesByType(userId, "%" + type + "%", base);
+    }
+
+    public List<Message> selectMessagesByFromId(Integer userId, Integer fromId, Integer base) {
+        return messageMapper.selectMessagesByFromId(userId, fromId, base);
+    }
+
+    public List<Message> selectMessagesByBeRead(Integer userId, Boolean beRead, Integer base) {
+        return messageMapper.selectMessagesByBeRead(userId, beRead, base);
     }
 }

@@ -25,12 +25,12 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, String mobile) {
+    public User(String username, String nickname, String password, String mobile) {
         this.username = username;
         this.password = password;
         this.mobile = mobile;
         this.roleId = 1;
-        this.nickname = username;
+        this.nickname = nickname;
         this.avatar = "default.png";
         this.signature = "这个人很懒，什么都没写...";
         this.gender = 0;

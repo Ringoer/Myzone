@@ -55,9 +55,12 @@ public class UserService {
         List<Integer> queryArray = new ArrayList<>();
         queryArray.add(user.getId());
         message.put("ids", queryArray);
-        System.out.println(message.toJSONString());
 
-        messageService.postMessage(0, message);
+        try {
+            messageService.postMessage(0, message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return ResponseUtil.ok(resp);
     }
@@ -68,9 +71,14 @@ public class UserService {
         }
         logger.info("in getInfo userId = " + userId);
 
-        User user = userDao.selectUserById(userId);
-        if(null == user) {
-            return ResponseUtil.withoutName();
+        User user;
+        if(userId == 0) {
+            user = new User("system", "系统", "233", "18000000000");
+        } else {
+            user = userDao.selectUserById(userId);
+            if(null == user) {
+                return ResponseUtil.badArgumentValue();
+            }
         }
 
         return ResponseUtil.ok(user);
@@ -79,7 +87,7 @@ public class UserService {
     public Object register(User registerUser) {
         final Integer lenOfMoblie = 11;
 
-        if(null == registerUser.getUsername()
+        if(null == registerUser.getNickname()
                 || null == registerUser.getPassword()
                 || null == registerUser.getMobile()
                 || !lenOfMoblie.equals(registerUser.getMobile().length())) {
@@ -91,17 +99,20 @@ public class UserService {
             return ResponseUtil.badArgument();
         }
 
-        User user = userDao.selectUserByUsername(registerUser.getUsername());
-        if(null != user) {
-            return ResponseUtil.noName();
-        }
-        user = userDao.selectUserByMobile(registerUser.getMobile());
+        User user = userDao.selectUserByMobile(registerUser.getMobile());
         if(null != user) {
             return ResponseUtil.wrongMobile();
         }
 
-        user = new User(registerUser.getUsername(), registerUser.getPassword(), registerUser.getMobile());
-        logger.info(user.toString());
+        String username = CommonUtil.getRandomNum(9);
+        user = userDao.selectUserByUsername(username);
+        while(null != user) {
+            username = CommonUtil.getRandomNum(9);
+            user = userDao.selectUserByUsername(username);
+        }
+
+        user = new User(username, registerUser.getNickname(), registerUser.getPassword(), registerUser.getMobile());
+        logger.info("registering user = " + user.toString());
 
         Integer lines = userDao.insertUser(user);
         if(lines.equals(0)) {

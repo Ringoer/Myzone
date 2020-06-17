@@ -17,8 +17,10 @@ public class Message {
     private String type;
     private boolean beRead;
     private Integer fromId;
+    private String fromUsername;
     private String fromNickname;
     private Integer toId;
+    private String toUsername;
     private String toNickname;
     private LocalDateTime gmtModified;
     private LocalDateTime gmtCreate;
@@ -64,8 +66,10 @@ public class Message {
                 Objects.equals(content, message.content) &&
                 Objects.equals(type, message.type) &&
                 Objects.equals(fromId, message.fromId) &&
+                Objects.equals(fromUsername, message.fromUsername) &&
                 Objects.equals(fromNickname, message.fromNickname) &&
                 Objects.equals(toId, message.toId) &&
+                Objects.equals(toUsername, message.toUsername) &&
                 Objects.equals(toNickname, message.toNickname) &&
                 Objects.equals(gmtModified, message.gmtModified) &&
                 Objects.equals(gmtCreate, message.gmtCreate);
@@ -73,7 +77,7 @@ public class Message {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, sendTime, topic, content, type, beRead, fromId, fromNickname, toId, toNickname, gmtModified, gmtCreate, beDeleted);
+        return Objects.hash(id, sendTime, topic, content, type, beRead, fromId, fromUsername, fromNickname, toId, toUsername, toNickname, gmtModified, gmtCreate, beDeleted);
     }
 
     @Override
@@ -86,8 +90,10 @@ public class Message {
                 ", type='" + type + '\'' +
                 ", beRead=" + beRead +
                 ", fromId=" + fromId +
+                ", fromUsername='" + fromUsername + '\'' +
                 ", fromNickname='" + fromNickname + '\'' +
                 ", toId=" + toId +
+                ", toUsername='" + toUsername + '\'' +
                 ", toNickname='" + toNickname + '\'' +
                 ", gmtModified=" + gmtModified +
                 ", gmtCreate=" + gmtCreate +
@@ -151,6 +157,14 @@ public class Message {
         this.fromId = fromId;
     }
 
+    public String getFromUsername() {
+        return fromUsername;
+    }
+
+    public void setFromUsername(String fromUsername) {
+        this.fromUsername = fromUsername;
+    }
+
     public String getFromNickname() {
         return fromNickname;
     }
@@ -165,6 +179,14 @@ public class Message {
 
     public void setToId(Integer toId) {
         this.toId = toId;
+    }
+
+    public String getToUsername() {
+        return toUsername;
+    }
+
+    public void setToUsername(String toUsername) {
+        this.toUsername = toUsername;
     }
 
     public String getToNickname() {

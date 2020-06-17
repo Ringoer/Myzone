@@ -15,11 +15,10 @@ public interface MessageMapper {
     /**
      * 根据userId和类型查找消息
      * @param userId 用户id
-     * @param queryString 类型
      * @param base 下界
      * @return 消息列表
      */
-    List<Message> selectMessagesByUserId(@Param("userId") Integer userId, @Param("queryString") String queryString, @Param("base") Integer base);
+    List<Message> selectMessagesByUserId(@Param("userId") Integer userId, @Param("base") Integer base);
 
     /**
      * 插入新消息
@@ -56,4 +55,31 @@ public interface MessageMapper {
      * @return 行数
      */
     Integer updateMessageById(@Param("id") Integer id, @Param("isRead") boolean isRead);
+
+    /**
+     * 根据userId和类型查找消息
+     * @param userId 用户id
+     * @param type 类型
+     * @param base 下界
+     * @return 消息列表
+     */
+    List<Message> selectMessagesByType(@Param("userId") Integer userId, @Param("type") String type, @Param("base") Integer base);
+
+    /**
+     * 根据userId和类型查找消息
+     * @param userId 用户id
+     * @param fromId 发件人id
+     * @param base 下界
+     * @return 消息列表
+     */
+    List<Message> selectMessagesByFromId(@Param("userId") Integer userId, @Param("fromId") Integer fromId, @Param("base") Integer base);
+
+    /**
+     * 根据userId和类型查找消息
+     * @param userId 用户id
+     * @param beRead 是否已读
+     * @param base 下界
+     * @return 消息列表
+     */
+    List<Message> selectMessagesByBeRead(@Param("userId") Integer userId, @Param("beRead") Boolean beRead,@Param("base")  Integer base);
 }
