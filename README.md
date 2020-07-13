@@ -4,6 +4,36 @@
 >
 > 模拟qzone和xmu ssfw
 
+## 性能分析
+
+| 模块名   | CPU  | MEM  | 带宽 | 理由                                                         |
+| -------- | ---- | ---- | ---- | ------------------------------------------------------------ |
+| eureka   | -    | -    | +    | 经常被zuul访问，以保持zuul的实例列表时效性                   |
+| zuul     | +++  | +++  | +++  | 作为整个应用的入口，不仅要识别请求，还要转发请求，是性能瓶颈之所在 |
+| user     | +    | +    | +    | 用户登录是最常访问的功能，需要快速响应，但其他功能并不常用   |
+| course   | -    | -    | -    | 实现对用户自己的课程的增删改查，是一般功能                   |
+| dynamics | ++   | ++   | ++   | 实现对用户自己动态的增删改查以及对好友的查，是较常用功能     |
+| message  | +++  | +++  | +++  | 站内信是非常常用的功能，必须保证性能                         |
+| news     | -    | -    | -    | 目前只能获取艾尔之光新闻，并不常访问                         |
+
+结论：
+
+zuul必须保证性能，使用主机1运行，同时绑定关联密切的eureka
+
+其余均在主机2上运行
+
+## 部署计划
+
+| 模块名   | docker镜像名    | docker实例名    | 主机编号 |
+| -------- | --------------- | --------------- | -------- |
+| eureka   | myzone-eureka   | myzone-eureka   | 1        |
+| zuul     | myzone-zuul     | myzone-zuul     | 1        |
+| user     | myzone-user     | myzone-user     | 2        |
+| course   | myzone-course   | myzone-course   | 2        |
+| dynamics | myzone-dynamics | myzone-dynamics | 2        |
+| message  | myzone-message  | myzone-message  | 2        |
+| news     | myzone-news     | myzone-news     | 2        |
+
 ## 7.13 更新
 
 完善了用户注册部分逻辑，增加了邮件验证码判定
