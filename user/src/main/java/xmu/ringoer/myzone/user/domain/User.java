@@ -15,7 +15,7 @@ public class User {
     private String nickname;
     private String avatar;
     private String signature;
-    private String mobile;
+    private String email;
     private Integer gender;
     private LocalDateTime birthday;
     private LocalDateTime gmtModified;
@@ -25,10 +25,10 @@ public class User {
     public User() {
     }
 
-    public User(String username, String nickname, String password, String mobile) {
+    public User(String username, String nickname, String password, String email) {
         this.username = username;
         this.password = password;
-        this.mobile = mobile;
+        this.email = email;
         this.roleId = 1;
         this.nickname = nickname;
         this.avatar = "default.png";
@@ -47,7 +47,7 @@ public class User {
                 ", nickname='" + nickname + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", signature='" + signature + '\'' +
-                ", mobile='" + mobile + '\'' +
+                ", email='" + email + '\'' +
                 ", gender=" + gender +
                 ", birthday=" + birthday +
                 ", gmtModified=" + gmtModified +
@@ -73,7 +73,7 @@ public class User {
                 Objects.equals(nickname, user.nickname) &&
                 Objects.equals(avatar, user.avatar) &&
                 Objects.equals(signature, user.signature) &&
-                Objects.equals(mobile, user.mobile) &&
+                Objects.equals(email, user.email) &&
                 Objects.equals(gender, user.gender) &&
                 Objects.equals(birthday, user.birthday) &&
                 Objects.equals(gmtModified, user.gmtModified) &&
@@ -82,7 +82,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, roleId, nickname, avatar, signature, mobile, gender, birthday, gmtModified, gmtCreate, beDeleted);
+        return Objects.hash(id, username, password, roleId, nickname, avatar, signature, email, gender, birthday, gmtModified, gmtCreate, beDeleted);
     }
 
     public Integer getId() {
@@ -141,12 +141,12 @@ public class User {
         this.signature = signature;
     }
 
-    public String getMobile() {
-        return mobile;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Integer getGender() {

@@ -109,8 +109,8 @@ public class ResponseUtil {
         return fail(661, "用户名已被注册");
     }
 
-    public static JSONObject wrongMobile() {
-        return fail(662, "手机号已被注册");
+    public static JSONObject wrongEmail() {
+        return fail(662, "该邮箱已被使用");
     }
 
     public static JSONObject withoutName() {

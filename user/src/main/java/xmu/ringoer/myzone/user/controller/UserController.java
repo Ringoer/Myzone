@@ -2,6 +2,7 @@ package xmu.ringoer.myzone.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import xmu.ringoer.myzone.user.controller.dto.UserCodeDto;
 import xmu.ringoer.myzone.user.domain.User;
 import xmu.ringoer.myzone.user.service.UserService;
 
@@ -26,8 +27,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Object register(@RequestBody User user) {
-        return userService.register(user);
+    public Object register(@RequestBody UserCodeDto userCodeDto) {
+        return userService.register(userCodeDto.getUser(), userCodeDto.getCode());
     }
 
     @PutMapping("/info")
@@ -36,21 +37,23 @@ public class UserController {
         return userService.putInfo(user);
     }
 
+    @PostMapping("/code")
+    public Object getCode(@RequestBody String email) {
+        return userService.getCode(email);
+    }
+
     @PutMapping("/password")
-    public Object putPassword(@RequestBody User user, @RequestHeader Integer userId) {
+    public Object putPassword(@RequestBody UserCodeDto userCodeDto, @RequestHeader Integer userId) {
+        User user = userCodeDto.getUser();
         user.setId(userId);
-        return userService.putPassword(user);
+        return userService.putPassword(user, userCodeDto.getCode());
     }
 
-    @GetMapping("/code")
-    public Object getCode() {
-        return userService.getCode();
-    }
-
-    @PutMapping("/mobile")
-    public Object putMobile(@RequestBody User user, @RequestBody String code, @RequestHeader Integer userId) {
+    @PutMapping("/email")
+    public Object putEmail(@RequestBody UserCodeDto userCodeDto, @RequestHeader Integer userId) {
+        User user = userCodeDto.getUser();
         user.setId(userId);
-        return userService.putMobile(user, code);
+        return userService.putEmail(user, userCodeDto.getCode());
     }
 
     @GetMapping("/users")

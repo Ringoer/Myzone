@@ -10,13 +10,13 @@
             nickname,
             avatar,
             signature,
-            mobile,
+            email,
             gender,
             birthday,
             gmt_create,
             gmt_modified,
             is_deleted as beDeleted
-        from `user` where `username` = #{username};
+        from `user` where `is_deleted` = 0 and`username` = #{username};
     </select>
 
     <select id="selectUserById" parameterType="Integer" resultType="User">
@@ -27,16 +27,16 @@
             nickname,
             avatar,
             signature,
-            mobile,
+            email,
             gender,
             birthday,
             gmt_create,
             gmt_modified,
             is_deleted as beDeleted
-        from `user` where `id` = #{id};
+        from `user` where `is_deleted` = 0 and `id` = #{id};
     </select>
 
-    <select id="selectUserByMobile" parameterType="String" resultType="User">
+    <select id="selectUserByEmail" parameterType="String" resultType="User">
         select id,
             username,
             password,
@@ -44,13 +44,13 @@
             nickname,
             avatar,
             signature,
-            mobile,
+            email,
             gender,
             birthday,
             gmt_create,
             gmt_modified,
             is_deleted as beDeleted
-        from `user` where `mobile` = #{mobile};
+        from `user` where `is_deleted` = 0 and `email` = #{email};
     </select>
 
     <select id="selectUsers" resultType="User">
@@ -61,7 +61,7 @@
             nickname,
             avatar,
             signature,
-            mobile,
+            email,
             gender,
             birthday,
             gmt_create,
@@ -78,7 +78,7 @@
             nickname,
             avatar,
             signature,
-            mobile,
+            email,
             gender,
             birthday,
             gmt_create,
@@ -91,7 +91,7 @@
             #{nickname},
             #{avatar},
             #{signature},
-            #{mobile},
+            #{email},
             #{gender},
             #{birthday},
             now(),
@@ -107,21 +107,21 @@
             gender = #{gender},
             birthday = #{birthday},
             gmt_modified = now()
-        where id=#{id};
+        where `is_deleted` = 0 and id = #{id};
     </update>
 
     <update id="updateUserPassword" parameterType="User" >
         update `user`
         set password = #{password},
             gmt_modified = now()
-        where id=#{id};
+        where `is_deleted` = 0 and id = #{id};
     </update>
 
-    <update id="updateUserMobile" parameterType="User" >
+    <update id="updateUserEmail" parameterType="User" >
         update `user`
-        set mobile = #{mobile},
-        gmt_modified = now()
-        where id=#{id};
+        set email = #{email},
+            gmt_modified = now()
+        where `is_deleted` = 0 and id = #{id};
     </update>
 
 </mapper>

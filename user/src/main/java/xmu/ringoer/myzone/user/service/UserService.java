@@ -10,12 +10,14 @@ import xmu.ringoer.myzone.user.domain.Message;
 import xmu.ringoer.myzone.user.domain.User;
 import xmu.ringoer.myzone.user.feign.MessageService;
 import xmu.ringoer.myzone.user.util.CommonUtil;
+import xmu.ringoer.myzone.user.util.EmailUtil;
 import xmu.ringoer.myzone.user.util.ResponseUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author Ringoer
@@ -24,6 +26,7 @@ import java.util.List;
 public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final String EMAIL_REGEX = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
 
     @Autowired
     private UserDao userDao;
@@ -84,34 +87,31 @@ public class UserService {
         return ResponseUtil.ok(user);
     }
 
-    public Object register(User registerUser) {
-        final Integer lenOfMoblie = 11;
-
+    public Object register(User registerUser, String code) {
         if(null == registerUser.getNickname()
                 || null == registerUser.getPassword()
-                || null == registerUser.getMobile()
-                || !lenOfMoblie.equals(registerUser.getMobile().length())) {
-            return ResponseUtil.badArgument();
-        }
-        try {
-            Long.parseLong(registerUser.getMobile());
-        } catch (Exception e) {
+                || null == registerUser.getEmail()
+                || !registerUser.getEmail().matches(EMAIL_REGEX)
+                || null == code) {
             return ResponseUtil.badArgument();
         }
 
-        User user = userDao.selectUserByMobile(registerUser.getMobile());
+        User user = userDao.selectUserByEmail(registerUser.getEmail());
         if(null != user) {
-            return ResponseUtil.wrongMobile();
+            return ResponseUtil.wrongEmail();
+        }
+        String verifyCode = userDao.selectVerifyCodeByEmail(registerUser.getEmail());
+        if(!code.equals(verifyCode)) {
+            return ResponseUtil.badArgument();
         }
 
         String username = CommonUtil.getRandomNum(9);
-        user = userDao.selectUserByUsername(username);
-        while(null != user) {
+        while(userDao.isUsernameUsed(username)) {
             username = CommonUtil.getRandomNum(9);
-            user = userDao.selectUserByUsername(username);
         }
+        userDao.updateUsernames(username);
 
-        user = new User(username, registerUser.getNickname(), registerUser.getPassword(), registerUser.getMobile());
+        user = new User(username, registerUser.getNickname(), registerUser.getPassword(), registerUser.getEmail());
         logger.info("registering user = " + user.toString());
 
         Integer lines = userDao.insertUser(user);
@@ -124,6 +124,7 @@ public class UserService {
 
     public Object putInfo(User putUser) {
         if(null == putUser.getId()
+                || null == putUser.getGender()
                 || putUser.getGender() < 0
                 || putUser.getGender() > 2) {
             return ResponseUtil.badArgument();
@@ -158,14 +159,18 @@ public class UserService {
         return ResponseUtil.ok();
     }
 
-    public Object putPassword(User putUser) {
-        if(null == putUser.getId() || null == putUser.getPassword()) {
+    public Object putPassword(User putUser, String code) {
+        if(null == putUser.getId() || null == putUser.getPassword() || null == code) {
             return ResponseUtil.badArgument();
         }
 
         User user = userDao.selectUserById(putUser.getId());
         if(null == user) {
             return ResponseUtil.withoutName();
+        }
+        String verifyCode = userDao.selectVerifyCodeByEmail(putUser.getEmail());
+        if(!code.equals(verifyCode)) {
+            return ResponseUtil.badArgument();
         }
 
         user.setPassword(putUser.getPassword());
@@ -178,26 +183,44 @@ public class UserService {
         return ResponseUtil.ok();
     }
 
-    public Object getCode() {
-        final int lenOfCode = 4;
-        return ResponseUtil.ok(CommonUtil.getRandomNum(lenOfCode));
-    }
-
-    public Object putMobile(User putUser, String code) {
-        if(null == putUser.getId() || null == putUser.getMobile()) {
+    public Object getCode(String email) {
+        if(null == email || !email.matches(EMAIL_REGEX)) {
             return ResponseUtil.badArgument();
         }
 
-        User user = userDao.selectUserById(putUser.getId());
+        final int lenOfCode = 4;
+        String code = CommonUtil.getRandomNum(lenOfCode);
+
+        userDao.insertVerifyCode(email, code, LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")));
+
+        String text = "您正在申请来自 Myzone 的验证码。<br><br>您的验证码是：<br><br>" + code + "<br><br>您的验证码有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+        EmailUtil.sendMail(email, text, "来自 Myzone 的验证码");
+
+        return ResponseUtil.ok();
+    }
+
+    public Object putEmail(User putUser, String code) {
+        if(null == putUser.getId() || null == putUser.getEmail() || !putUser.getEmail().matches(EMAIL_REGEX) || null == code) {
+            return ResponseUtil.badArgument();
+        }
+
+        User user = userDao.selectUserByEmail(putUser.getEmail());
+        if(null != user) {
+            return ResponseUtil.wrongEmail();
+        }
+        user = userDao.selectUserById(putUser.getId());
         if(null == user) {
             return ResponseUtil.withoutName();
         }
 
-        //TODO 校验验证码
+        String verifyCode = userDao.selectVerifyCodeByEmail(putUser.getEmail());
+        if(!code.equals(verifyCode)) {
+            return ResponseUtil.badArgument();
+        }
 
-        user.setMobile(putUser.getMobile());
+        user.setEmail(putUser.getEmail());
 
-        Integer lines = userDao.updateUserMobile(user);
+        Integer lines = userDao.updateUserEmail(user);
         if(lines.equals(0)) {
             return ResponseUtil.serious();
         }

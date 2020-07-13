@@ -27,10 +27,10 @@ public interface UserMapper {
 
     /**
      * 根据mobile查找user
-     * @param mobile 用户电话
+     * @param email 用户邮件
      * @return 对应的用户，若找不到则为空
      */
-    User selectUserByMobile(String mobile);
+    User selectUserByEmail(String email);
 
     /**
      * 新建一条user记录
@@ -58,7 +58,7 @@ public interface UserMapper {
      * @param user 只有手机号字段的user记录
      * @return 行数
      */
-    Integer updateUserMobile(User user);
+    Integer updateUserEmail(User user);
 
     /**
      * 查询用户列表
