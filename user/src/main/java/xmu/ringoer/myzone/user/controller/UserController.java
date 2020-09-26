@@ -30,7 +30,7 @@ public class UserController {
         return userService.register(user);
     }
 
-    @PostMapping("/register/verify")
+    @PutMapping("/register/verify")
     public Object registerVerify(@RequestBody String code) {
         return userService.registerVerify(code);
     }
