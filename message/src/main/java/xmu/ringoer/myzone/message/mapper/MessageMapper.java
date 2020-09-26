@@ -13,7 +13,7 @@ import java.util.List;
 public interface MessageMapper {
 
     /**
-     * 插入新消息
+     * 获取总消息数量
      * @param userId 用户id
      * @return 行数
      */
@@ -64,6 +64,14 @@ public interface MessageMapper {
     Integer updateMessageById(@Param("id") Integer id, @Param("isRead") boolean isRead);
 
     /**
+     * 根据类型获取总消息数量
+     * @param userId 用户id
+     * @param type 类型
+     * @return 行数
+     */
+    Integer selectMessageCountByType(@Param("userId") Integer userId, @Param("type") String type);
+
+    /**
      * 根据userId和类型查找消息
      * @param userId 用户id
      * @param type 类型
@@ -73,7 +81,15 @@ public interface MessageMapper {
     List<Message> selectMessagesByType(@Param("userId") Integer userId, @Param("type") String type, @Param("base") Integer base);
 
     /**
-     * 根据userId和类型查找消息
+     * 根据userId和发件人id获取总消息数量
+     * @param userId 用户id
+     * @param fromId 发件人id
+     * @return 行数
+     */
+    Integer selectMessageCountByFromId(@Param("userId") Integer userId, @Param("fromId") Integer fromId);
+
+    /**
+     * 根据userId和发件人id查找消息
      * @param userId 用户id
      * @param fromId 发件人id
      * @param base 下界
@@ -82,11 +98,19 @@ public interface MessageMapper {
     List<Message> selectMessagesByFromId(@Param("userId") Integer userId, @Param("fromId") Integer fromId, @Param("base") Integer base);
 
     /**
-     * 根据userId和类型查找消息
+     * 根据类型获取总消息数量
+     * @param userId 用户id
+     * @param beRead 是否已读
+     * @return 行数
+     */
+    Integer selectMessageCountByBeRead(@Param("userId") Integer userId, @Param("beRead") Boolean beRead);
+
+    /**
+     * 根据userId和已读/未读查找消息
      * @param userId 用户id
      * @param beRead 是否已读
      * @param base 下界
      * @return 消息列表
      */
-    List<Message> selectMessagesByBeRead(@Param("userId") Integer userId, @Param("beRead") Boolean beRead,@Param("base")  Integer base);
+    List<Message> selectMessagesByBeRead(@Param("userId") Integer userId, @Param("beRead") Boolean beRead, @Param("base")  Integer base);
 }

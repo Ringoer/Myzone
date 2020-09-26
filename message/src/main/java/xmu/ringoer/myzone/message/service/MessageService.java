@@ -49,7 +49,11 @@ public class MessageService {
             return ResponseUtil.wrongPage();
         }
 
-        return ResponseUtil.ok(solveMessages(userId, messages));
+        JSONObject ans = new JSONObject();
+        ans.put("data", messages);
+        ans.put("count", messageDao.selectMessageCount(userId));
+
+        return ResponseUtil.ok(ans);
     }
 
     public Object getLatestMessageByUserId(Integer userId) {
@@ -209,7 +213,11 @@ public class MessageService {
             return ResponseUtil.wrongPage();
         }
 
-        return ResponseUtil.ok(solveMessages(userId, messages));
+        JSONObject ans = new JSONObject();
+        ans.put("data", messages);
+        ans.put("count", messageDao.selectMessageCountByType(userId, queryString));
+
+        return ResponseUtil.ok(ans);
     }
 
     public Object getMessageByFromId(Integer userId, String queryString, String page) {
@@ -240,7 +248,11 @@ public class MessageService {
             return ResponseUtil.wrongPage();
         }
 
-        return ResponseUtil.ok(solveMessages(userId, messages));
+        JSONObject ans = new JSONObject();
+        ans.put("data", messages);
+        ans.put("count", messageDao.selectMessageCountByFromId(userId, Integer.parseInt(queryString)));
+
+        return ResponseUtil.ok(ans);
     }
 
     public Object getMessageByBeRead(Integer userId, String queryString, String page) {
@@ -268,13 +280,10 @@ public class MessageService {
             return ResponseUtil.wrongPage();
         }
 
-        return ResponseUtil.ok(solveMessages(userId, messages));
-    }
-
-    private JSONObject solveMessages(Integer userId, List<Message> messages) {
         JSONObject ans = new JSONObject();
         ans.put("data", messages);
-        ans.put("count", messageDao.selectMessageCount(userId));
-        return ans;
+        ans.put("count", messageDao.selectMessageCountByBeRead(userId, Boolean.parseBoolean(queryString)));
+
+        return ResponseUtil.ok(ans);
     }
 }

@@ -44,12 +44,24 @@ public class MessageDao {
         return messageMapper.updateMessageById(id, isRead);
     }
 
+    public Integer selectMessageCountByType(Integer userId, String type) {
+        return messageMapper.selectMessageCountByType(userId, type);
+    }
+
     public List<Message> selectMessagesByType(Integer userId, String type, Integer base) {
         return messageMapper.selectMessagesByType(userId, "%" + type + "%", base);
     }
 
+    public Integer selectMessageCountByFromId(Integer userId, Integer fromId) {
+        return messageMapper.selectMessageCountByFromId(userId, fromId);
+    }
+
     public List<Message> selectMessagesByFromId(Integer userId, Integer fromId, Integer base) {
         return messageMapper.selectMessagesByFromId(userId, fromId, base);
+    }
+
+    public Integer selectMessageCountByBeRead(Integer userId, Boolean beRead) {
+        return messageMapper.selectMessageCountByBeRead(userId, beRead);
     }
 
     public List<Message> selectMessagesByBeRead(Integer userId, Boolean beRead, Integer base) {
