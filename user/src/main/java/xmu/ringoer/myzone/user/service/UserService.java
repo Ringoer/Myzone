@@ -298,6 +298,9 @@ public class UserService {
             if(lines.equals(0)) {
                 return ResponseUtil.serious();
             }
+
+            String text = "亲爱的 "+ user.getUsername() + "：<br><br>恭喜您修改您在 Myzone 的邮箱成功！";
+            EmailUtil.sendMail(user.getEmail(), text, "【Myzone】修改邮箱成功");
         } else {
             return ResponseUtil.badArgument();
         }
