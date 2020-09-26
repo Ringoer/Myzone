@@ -49,7 +49,7 @@ public class MessageService {
             return ResponseUtil.wrongPage();
         }
 
-        return ResponseUtil.ok(messages);
+        return ResponseUtil.ok(solveMessages(userId, messages));
     }
 
     public Object getLatestMessageByUserId(Integer userId) {
@@ -209,7 +209,7 @@ public class MessageService {
             return ResponseUtil.wrongPage();
         }
 
-        return ResponseUtil.ok(messages);
+        return ResponseUtil.ok(solveMessages(userId, messages));
     }
 
     public Object getMessageByFromId(Integer userId, String queryString, String page) {
@@ -240,7 +240,7 @@ public class MessageService {
             return ResponseUtil.wrongPage();
         }
 
-        return ResponseUtil.ok(messages);
+        return ResponseUtil.ok(solveMessages(userId, messages));
     }
 
     public Object getMessageByBeRead(Integer userId, String queryString, String page) {
@@ -268,6 +268,13 @@ public class MessageService {
             return ResponseUtil.wrongPage();
         }
 
-        return ResponseUtil.ok(messages);
+        return ResponseUtil.ok(solveMessages(userId, messages));
+    }
+
+    private JSONObject solveMessages(Integer userId, List<Message> messages) {
+        JSONObject ans = new JSONObject();
+        ans.put("data", messages);
+        ans.put("count", messageDao.selectMessageCount(userId));
+        return ans;
     }
 }

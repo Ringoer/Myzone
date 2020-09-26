@@ -13,6 +13,13 @@ import java.util.List;
 public interface MessageMapper {
 
     /**
+     * 插入新消息
+     * @param userId 用户id
+     * @return 行数
+     */
+    Integer selectMessageCount(Integer userId);
+
+    /**
      * 根据userId和类型查找消息
      * @param userId 用户id
      * @param base 下界

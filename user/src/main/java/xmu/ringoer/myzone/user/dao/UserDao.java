@@ -35,6 +35,10 @@ public class UserDao {
         }
     }
 
+    public Integer selectUserCount() {
+        return userMapper.selectUserCount();
+    }
+
     public User selectUserByUsername(String username) {
         return userMapper.selectUserByUsername(username);
     }
@@ -45,6 +49,14 @@ public class UserDao {
 
     public User selectUserByEmail(String email) {
         return userMapper.selectUserByEmail(email);
+    }
+
+    public User selectDisabledUserByEmail(String email) {
+        return userMapper.selectDisabledUserByEmail(email);
+    }
+
+    public User selectAllUserByEmail(String email) {
+        return userMapper.selectAllUserByEmail(email);
     }
 
     public Integer insertUser(User user) {
@@ -105,5 +117,13 @@ public class UserDao {
 
     public void updateUsernames(String username) {
         usernames.add(username);
+    }
+
+    public Integer enableUser(User user) {
+        return userMapper.enableUser(user);
+    }
+
+    public Integer disableUser(User user) {
+        return userMapper.disableUser(user);
     }
 }

@@ -12,11 +12,13 @@ import xmu.ringoer.myzone.user.feign.MessageService;
 import xmu.ringoer.myzone.user.util.CommonUtil;
 import xmu.ringoer.myzone.user.util.EmailUtil;
 import xmu.ringoer.myzone.user.util.ResponseUtil;
+import xmu.ringoer.myzone.user.util.VerifyCodeUtil;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -87,34 +89,61 @@ public class UserService {
         return ResponseUtil.ok(user);
     }
 
-    public Object register(User registerUser, String code) {
-        if(null == registerUser.getNickname()
-                || null == registerUser.getPassword()
+    public Object register(User registerUser) {
+        if(null == registerUser.getPassword()
                 || null == registerUser.getEmail()
-                || !registerUser.getEmail().matches(EMAIL_REGEX)
-                || null == code) {
+                || !registerUser.getEmail().matches(EMAIL_REGEX)) {
             return ResponseUtil.badArgument();
         }
 
-        User user = userDao.selectUserByEmail(registerUser.getEmail());
+        User user = userDao.selectAllUserByEmail(registerUser.getEmail());
         if(null != user) {
             return ResponseUtil.wrongEmail();
         }
-        String verifyCode = userDao.selectVerifyCodeByEmail(registerUser.getEmail());
-        if(!code.equals(verifyCode)) {
+
+        user = userDao.selectUserByUsername(registerUser.getUsername());
+        if(null != user) {
+            return ResponseUtil.wrongUsername();
+        }
+
+        user = new User(registerUser.getUsername(), registerUser.getPassword(), registerUser.getEmail());
+        logger.info("registering user = " + user.toString());
+
+        String text = "亲爱的 "+ registerUser.getUsername() + "：<br><br>您正在注册 Myzone 用户。<br><br>您的注册链接是：<br><br>http://zone.ringoer.com/api/user/register/verify?code=" + VerifyCodeUtil.createVerifyCode(registerUser.getUsername(), registerUser.getPassword(), registerUser.getEmail(), "register") + "<br><br>您的注册链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+        EmailUtil.sendMail(registerUser.getEmail(), text, "【Myzone】欢迎注册 Myzone");
+
+        Integer lines = userDao.insertUser(user);
+        if(lines.equals(0)) {
+            return ResponseUtil.serious();
+        }
+
+        lines = userDao.disableUser(user);
+        if(lines.equals(0)) {
+            return ResponseUtil.serious();
+        }
+
+        return ResponseUtil.ok();
+    }
+
+    public Object registerVerify(String verifyCode) {
+        Map<String, String> verifyData = VerifyCodeUtil.parseVerifyCode(verifyCode);
+        if(!checkVerifyData(verifyData) || !"register".equals(verifyData.get("action"))) {
             return ResponseUtil.badArgument();
         }
 
-        String username = CommonUtil.getRandomNum(9);
-        while(userDao.isUsernameUsed(username)) {
-            username = CommonUtil.getRandomNum(9);
+        User user = userDao.selectUserByEmail(verifyData.get("email"));
+        if(user != null) {
+            return ResponseUtil.wrongEmail();
         }
-        userDao.updateUsernames(username);
 
-        user = new User(username, registerUser.getNickname(), registerUser.getPassword(), registerUser.getEmail());
-        logger.info("registering user = " + user.toString());
+        user = userDao.selectDisabledUserByEmail(verifyData.get("email"));
+        if (user == null
+                || !user.getUsername().equals(verifyData.get("username"))
+                || !user.getPassword().equals(verifyData.get("password"))) {
+            return ResponseUtil.badArgument();
+        }
 
-        Integer lines = userDao.insertUser(user);
+        Integer lines = userDao.enableUser(user);
         if(lines.equals(0)) {
             return ResponseUtil.serious();
         }
@@ -159,27 +188,39 @@ public class UserService {
         return ResponseUtil.ok();
     }
 
-    public Object putPassword(User putUser, String code) {
-        if(null == putUser.getId() || null == putUser.getPassword() || null == code) {
+    public Object putPassword(User putUser) {
+        if(null == putUser.getId() || null == putUser.getPassword()) {
             return ResponseUtil.badArgument();
         }
 
         User user = userDao.selectUserById(putUser.getId());
         if(null == user) {
-            return ResponseUtil.withoutName();
-        }
-        String verifyCode = userDao.selectVerifyCodeByEmail(putUser.getEmail());
-        if(!code.equals(verifyCode)) {
             return ResponseUtil.badArgument();
         }
 
-        user.setPassword(putUser.getPassword());
+        String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在修改您在 Myzone 的密码。<br><br>您的修改密码链接是：<br><br>http://zone.ringoer.com/api/user/password/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), putUser.getPassword(), user.getEmail(), "password") + "<br><br>您的修改密码链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+        EmailUtil.sendMail(user.getEmail(), text, "【Myzone】修改您在 Myzone 的密码");
+
+        return ResponseUtil.ok();
+    }
+
+    public Object putPasswordVerify(String verifyCode) {
+        Map<String, String> verifyData = VerifyCodeUtil.parseVerifyCode(verifyCode);
+        if(!checkVerifyData(verifyData) || !"password".equals(verifyData.get("action"))) {
+            return ResponseUtil.badArgument();
+        }
+
+        User user = userDao.selectUserByEmail(verifyData.get("email"));
+        if(user == null) {
+            return ResponseUtil.badArgument();
+        }
+
+        user.setPassword(verifyData.get("password"));
 
         Integer lines = userDao.updateUserPassword(user);
         if(lines.equals(0)) {
             return ResponseUtil.serious();
         }
-
         return ResponseUtil.ok();
     }
 
@@ -194,13 +235,13 @@ public class UserService {
         userDao.insertVerifyCode(email, code, LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8")));
 
         String text = "您正在申请来自 Myzone 的验证码。<br><br>您的验证码是：<br><br>" + code + "<br><br>您的验证码有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
-        EmailUtil.sendMail(email, text, "来自 Myzone 的验证码");
+        EmailUtil.sendMail(email, text, "【Myzone】来自 Myzone 的验证码");
 
         return ResponseUtil.ok();
     }
 
-    public Object putEmail(User putUser, String code) {
-        if(null == putUser.getId() || null == putUser.getEmail() || !putUser.getEmail().matches(EMAIL_REGEX) || null == code) {
+    public Object putEmail(User putUser) {
+        if(null == putUser.getId() || null == putUser.getEmail() || !putUser.getEmail().matches(EMAIL_REGEX)) {
             return ResponseUtil.badArgument();
         }
 
@@ -208,21 +249,57 @@ public class UserService {
         if(null != user) {
             return ResponseUtil.wrongEmail();
         }
-        user = userDao.selectUserById(putUser.getId());
-        if(null == user) {
-            return ResponseUtil.withoutName();
-        }
 
-        String verifyCode = userDao.selectVerifyCodeByEmail(putUser.getEmail());
-        if(!code.equals(verifyCode)) {
+        user = userDao.selectUserByUsername(putUser.getUsername());
+        if(null == user) {
             return ResponseUtil.badArgument();
         }
 
-        user.setEmail(putUser.getEmail());
+        String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在修改您在 Myzone 的邮箱。<br><br>您的修改邮箱链接是：<br><br>http://zone.ringoer.com/api/user/email/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), user.getPassword(), putUser.getEmail(), "oldEmail") + "<br><br>您的修改邮箱链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+        EmailUtil.sendMail(user.getEmail(), text, "【Myzone】修改您在 Myzone 的邮箱");
 
-        Integer lines = userDao.updateUserEmail(user);
-        if(lines.equals(0)) {
-            return ResponseUtil.serious();
+        return ResponseUtil.ok();
+    }
+
+    public Object putEmailVerify(String verifyCode) {
+        Map<String, String> verifyData = VerifyCodeUtil.parseVerifyCode(verifyCode);
+        if(!checkVerifyData(verifyData)) {
+            return ResponseUtil.badArgument();
+        }
+
+        if("oldEmail".equals(verifyData.get("action"))) {
+            User user = userDao.selectUserByEmail(verifyData.get("email"));
+            if(null != user) {
+                return ResponseUtil.wrongEmail();
+            }
+
+            user = userDao.selectUserByUsername(verifyData.get("username"));
+            if(user == null) {
+                return ResponseUtil.badArgument();
+            }
+
+            String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在验证您在 Myzone 的邮箱。<br><br>您的验证邮箱链接是：<br><br>http://zone.ringoer.com/api/user/email/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), user.getPassword(), verifyData.get("email"), "newEmail") + "<br><br>您的验证邮箱链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+            EmailUtil.sendMail(verifyData.get("email"), text, "【Myzone】验证您在 Myzone 的邮箱");
+
+        } else if("newEmail".equals(verifyData.get("action"))) {
+            User user = userDao.selectUserByEmail(verifyData.get("email"));
+            if(null != user) {
+                return ResponseUtil.wrongEmail();
+            }
+
+            user = userDao.selectUserByUsername(verifyData.get("username"));
+            if(user == null) {
+                return ResponseUtil.badArgument();
+            }
+
+            user.setEmail(verifyData.get("email"));
+
+            Integer lines = userDao.updateUserEmail(user);
+            if(lines.equals(0)) {
+                return ResponseUtil.serious();
+            }
+        } else {
+            return ResponseUtil.badArgument();
         }
 
         return ResponseUtil.ok();
@@ -253,6 +330,14 @@ public class UserService {
             ceil = users.size();
         }
 
-        return ResponseUtil.ok(users.subList(floor, ceil));
+        JSONObject ans = new JSONObject();
+        ans.put("data", users.subList(floor, ceil));
+        ans.put("count", userDao.selectUserCount());
+        return ResponseUtil.ok(ans);
+    }
+
+    private boolean checkVerifyData(Map<String, String> verifyData) {
+        return verifyData.keySet().contains("action")
+                && verifyData.keySet().contains("username") && verifyData.keySet().contains("password") && verifyData.keySet().contains("email");
     }
 }

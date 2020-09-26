@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.ringoer.myzone.message.mapper.MessageMapper">
 
+    <select id="selectMessageCount" parameterType="Integer" resultType="Integer">
+        select count(*)
+        from `message` where `to_id` = #{userId} and `is_deleted` = 0;
+    </select>
+
     <select id="selectMessagesByUserId" resultType="Message">
         select id,
             send_time,

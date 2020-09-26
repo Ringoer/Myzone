@@ -25,6 +25,18 @@ public class User {
     public User() {
     }
 
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.roleId = 1;
+        this.nickname = "神秘人";
+        this.avatar = "default.png";
+        this.signature = "这个人很懒，什么都没写...";
+        this.gender = 0;
+        this.birthday = LocalDateTime.of(1970, 1, 1, 0, 0);
+    }
+
     public User(String username, String nickname, String password, String email) {
         this.username = username;
         this.password = password;

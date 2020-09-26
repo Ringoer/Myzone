@@ -105,7 +105,7 @@ public class ResponseUtil {
         return fail(660, "用户未登录");
     }
 
-    public static JSONObject noName() {
+    public static JSONObject wrongUsername() {
         return fail(661, "用户名已被注册");
     }
 

@@ -59,10 +59,14 @@ public class TokenUtil {
     }
 
     public static boolean checkTokenTime(String token){
-        long until = Long.parseLong(Objects.requireNonNull(parseToken(token)).get("until").toString());
-        if(until <  System.currentTimeMillis()) {
+        try {
+            long until = Long.parseLong(Objects.requireNonNull(parseToken(token)).get("until").toString());
+            if(until <  System.currentTimeMillis()) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        return true;
     }
 }

@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="xmu.ringoer.myzone.user.mapper.UserMapper">
 
+    <select id="selectUserCount" resultType="Integer">
+        select count(*)
+        from `user`;
+    </select>
+
     <select id="selectUserByUsername" parameterType="String" resultType="User">
         select id,
             username,
@@ -51,6 +56,40 @@
             gmt_modified,
             is_deleted as beDeleted
         from `user` where `is_deleted` = 0 and `email` = #{email};
+    </select>
+
+    <select id="selectDisabledUserByEmail" parameterType="String" resultType="User">
+        select id,
+        username,
+        password,
+        role_id,
+        nickname,
+        avatar,
+        signature,
+        email,
+        gender,
+        birthday,
+        gmt_create,
+        gmt_modified,
+        is_deleted as beDeleted
+        from `user` where `is_deleted` = 1 and `email` = #{email};
+    </select>
+
+    <select id="selectAllUserByEmail" parameterType="String" resultType="User">
+        select id,
+        username,
+        password,
+        role_id,
+        nickname,
+        avatar,
+        signature,
+        email,
+        gender,
+        birthday,
+        gmt_create,
+        gmt_modified,
+        is_deleted as beDeleted
+        from `user` where `email` = #{email};
     </select>
 
     <select id="selectUsers" resultType="User">
@@ -122,6 +161,20 @@
         set email = #{email},
             gmt_modified = now()
         where `is_deleted` = 0 and id = #{id};
+    </update>
+
+    <update id="enableUser" parameterType="User" >
+        update `user`
+        set is_deleted = 0,
+            gmt_modified = now()
+        where id = #{id};
+    </update>
+
+    <update id="disableUser" parameterType="User" >
+        update `user`
+        set is_deleted = 1,
+            gmt_modified = now()
+        where id = #{id};
     </update>
 
 </mapper>

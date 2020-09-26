@@ -2,7 +2,6 @@ package xmu.ringoer.myzone.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import xmu.ringoer.myzone.user.controller.dto.UserCodeDto;
 import xmu.ringoer.myzone.user.domain.User;
 import xmu.ringoer.myzone.user.service.UserService;
 
@@ -10,7 +9,7 @@ import xmu.ringoer.myzone.user.service.UserService;
  * @author Ringoer
  */
 @RestController
-@RequestMapping(value = "/api", produces = {"application/json;charset=UTF-8"})
+@RequestMapping(value = "", produces = {"application/json;charset=UTF-8"})
 public class UserController {
 
     @Autowired
@@ -27,8 +26,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Object register(@RequestBody UserCodeDto userCodeDto) {
-        return userService.register(userCodeDto.getUser(), userCodeDto.getCode());
+    public Object register(@RequestBody User user) {
+        return userService.register(user);
+    }
+
+    @PostMapping("/register/verify")
+    public Object registerVerify(@RequestBody String code) {
+        return userService.registerVerify(code);
     }
 
     @PutMapping("/info")
@@ -43,17 +47,23 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    public Object putPassword(@RequestBody UserCodeDto userCodeDto, @RequestHeader Integer userId) {
-        User user = userCodeDto.getUser();
-        user.setId(userId);
-        return userService.putPassword(user, userCodeDto.getCode());
+    public Object putPassword(@RequestBody User user) {
+        return userService.putPassword(user);
+    }
+
+    @PutMapping("/password/verify")
+    public Object putPasswordVerify(@RequestBody String code) {
+        return userService.putPasswordVerify(code);
     }
 
     @PutMapping("/email")
-    public Object putEmail(@RequestBody UserCodeDto userCodeDto, @RequestHeader Integer userId) {
-        User user = userCodeDto.getUser();
-        user.setId(userId);
-        return userService.putEmail(user, userCodeDto.getCode());
+    public Object putEmail(@RequestBody User user) {
+        return userService.putEmail(user);
+    }
+
+    @PutMapping("/email/verify")
+    public Object putEmailVerify(@RequestBody String code) {
+        return userService.putEmailVerify(code);
     }
 
     @GetMapping("/users")

@@ -16,6 +16,10 @@ public class MessageDao {
     @Autowired
     private MessageMapper messageMapper;
 
+    public Integer selectMessageCount(Integer userId) {
+        return messageMapper.selectMessageCount(userId);
+    }
+
     public List<Message> selectMessagesByUserId(Integer userId, Integer base) {
         return messageMapper.selectMessagesByUserId(userId, base);
     }

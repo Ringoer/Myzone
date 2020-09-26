@@ -1,5 +1,5 @@
 server:
-  port: 3336
+  port: 5026
   connection-timeout: 30000
 #  address: 192.168.43.93
 

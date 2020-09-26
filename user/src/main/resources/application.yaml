@@ -1,5 +1,5 @@
 server:
-  port: 3333
+  port: 5023
   connection-timeout: 30000
 #  address: 192.168.43.93
 
@@ -21,6 +21,7 @@ mybatis:
 
 eureka:
   instance:
+#    ip-address: localhost
     prefer-ip-address: true
     lease-expiration-duration-in-seconds: 10
     lease-renewal-interval-in-seconds: 20

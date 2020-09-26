@@ -32,6 +32,11 @@ public class EmailUtil {
         //设置邮件服务器主机名
         props.setProperty("mail.smtp.host", host);
         props.put("mail.smtp.host", host);
+        //邮箱发送服务器端口,这里设置为465端口
+        props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.setProperty("mail.smtp.socketFactory.fallback", "false");
+        props.setProperty("mail.smtp.port", "465");
+        props.setProperty("mail.smtp.socketFactory.port", "465");
         //发送服务器需要身份验证
         props.put("mail.smtp.auth", "true");
         //设置邮件等待延时
