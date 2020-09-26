@@ -109,7 +109,7 @@ public class UserService {
         user = new User(registerUser.getUsername(), registerUser.getPassword(), registerUser.getEmail());
         logger.info("registering user = " + user.toString());
 
-        String text = "亲爱的 "+ registerUser.getUsername() + "：<br><br>您正在注册 Myzone 用户。<br><br>您的注册链接是：<br><br>http://zone.ringoer.com/api/user/register/verify?code=" + VerifyCodeUtil.createVerifyCode(registerUser.getUsername(), registerUser.getPassword(), registerUser.getEmail(), "register") + "<br><br>您的注册链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+        String text = "亲爱的 "+ registerUser.getUsername() + "：<br><br>您正在注册 Myzone 用户。<br><br>您的注册链接是：<br><br>http://zone.ringoer.com/register/verify?code=" + VerifyCodeUtil.createVerifyCode(registerUser.getUsername(), registerUser.getPassword(), registerUser.getEmail(), "register") + "<br><br>您的注册链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
         EmailUtil.sendMail(registerUser.getEmail(), text, "【Myzone】欢迎注册 Myzone");
 
         Integer lines = userDao.insertUser(user);
@@ -198,7 +198,7 @@ public class UserService {
             return ResponseUtil.badArgument();
         }
 
-        String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在修改您在 Myzone 的密码。<br><br>您的修改密码链接是：<br><br>http://zone.ringoer.com/api/user/password/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), putUser.getPassword(), user.getEmail(), "password") + "<br><br>您的修改密码链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+        String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在修改您在 Myzone 的密码。<br><br>您的修改密码链接是：<br><br>http://zone.ringoer.com/user/password/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), putUser.getPassword(), user.getEmail(), "password") + "<br><br>您的修改密码链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
         EmailUtil.sendMail(user.getEmail(), text, "【Myzone】修改您在 Myzone 的密码");
 
         return ResponseUtil.ok();
@@ -255,7 +255,7 @@ public class UserService {
             return ResponseUtil.badArgument();
         }
 
-        String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在修改您在 Myzone 的邮箱。<br><br>您的修改邮箱链接是：<br><br>http://zone.ringoer.com/api/user/email/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), user.getPassword(), putUser.getEmail(), "oldEmail") + "<br><br>您的修改邮箱链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+        String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在修改您在 Myzone 的邮箱。<br><br>您的修改邮箱链接是：<br><br>http://zone.ringoer.com/user/email/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), user.getPassword(), putUser.getEmail(), "oldEmail") + "<br><br>您的修改邮箱链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
         EmailUtil.sendMail(user.getEmail(), text, "【Myzone】修改您在 Myzone 的邮箱");
 
         return ResponseUtil.ok();
@@ -278,7 +278,7 @@ public class UserService {
                 return ResponseUtil.badArgument();
             }
 
-            String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在验证您在 Myzone 的邮箱。<br><br>您的验证邮箱链接是：<br><br>http://zone.ringoer.com/api/user/email/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), user.getPassword(), verifyData.get("email"), "newEmail") + "<br><br>您的验证邮箱链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
+            String text = "亲爱的 "+ user.getUsername() + "：<br><br>您正在验证您在 Myzone 的邮箱。<br><br>您的验证邮箱链接是：<br><br>http://zone.ringoer.com/user/email/verify?code=" + VerifyCodeUtil.createVerifyCode(user.getUsername(), user.getPassword(), verifyData.get("email"), "newEmail") + "<br><br>您的验证邮箱链接有效期为 5 分钟。<br><br>若不是您本人申请，请忽略此邮件。";
             EmailUtil.sendMail(verifyData.get("email"), text, "【Myzone】验证您在 Myzone 的邮箱");
 
         } else if("newEmail".equals(verifyData.get("action"))) {
