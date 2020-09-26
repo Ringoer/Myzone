@@ -1,5 +1,6 @@
 package xmu.ringoer.myzone.user.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import xmu.ringoer.myzone.user.domain.User;
@@ -31,8 +32,8 @@ public class UserController {
     }
 
     @PutMapping("/register/verify")
-    public Object registerVerify(@RequestBody String code) {
-        return userService.registerVerify(code);
+    public Object registerVerify(@RequestBody JSONObject jsonObject) {
+        return userService.registerVerify(jsonObject.getString("code"));
     }
 
     @PutMapping("/info")
@@ -52,8 +53,8 @@ public class UserController {
     }
 
     @PutMapping("/password/verify")
-    public Object putPasswordVerify(@RequestBody String code) {
-        return userService.putPasswordVerify(code);
+    public Object putPasswordVerify(@RequestBody JSONObject jsonObject) {
+        return userService.putPasswordVerify(jsonObject.getString("code"));
     }
 
     @PutMapping("/email")
@@ -62,8 +63,8 @@ public class UserController {
     }
 
     @PutMapping("/email/verify")
-    public Object putEmailVerify(@RequestBody String code) {
-        return userService.putEmailVerify(code);
+    public Object putEmailVerify(@RequestBody JSONObject jsonObject) {
+        return userService.putEmailVerify(jsonObject.getString("code"));
     }
 
     @GetMapping("/users")
