@@ -113,6 +113,7 @@ public class ResponseFilter extends ZuulFilter {
             else{
                 object.put("token",null);
             }
+            response.setHeader("Access-Control-Allow-Origin","*");
             requestContext.setResponseStatusCode(requestContext.getResponseStatusCode());
             requestContext.setResponseBody(resp.toString());
         }
